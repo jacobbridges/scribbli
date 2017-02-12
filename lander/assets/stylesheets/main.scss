@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+* {
+  color: #2E3D48;
+}
+
+body {
+  background-color: white;
+  transition: background-color 0.5s;
+}
+
+.showcase {
+  position: fixed;
+  top: 0;
+  display: table;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+.content {
+  display: table-cell;
+  vertical-align: middle;
+  position: relative;
+  bottom: 10vh;
+}
+
+.brand {
+  text-align: center;
+  font-size: 32pt;
+  font-family: "Open Sans", sans-serif;
+  animation: fade
+}
+
+.title {
+  margin-bottom: 3vh;
+  transition: color 0.5s;
+}
+
+.intro {
+  margin: 0 auto;
+  width: 17.5rem;
+  font-size: 15pt;
+  font-family: "Open Sans", sans-serif;
+}
+
+#once-upon-a-time {
+  position: relative;
+  left: 1.5rem;
+}
+
+.blinking-cursor {
+  position: relative;
+  bottom: 1pt;
+  font-weight: 100;
+  font-size: 15pt;
+  color: black;
+  animation: 1.2s blink step-end infinite;
+}
+
+@keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+}
+
+.fade {
+  opacity: 0;
+  animation: 0.75s ease-in 0.1s fade;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+.attn {
+  position: fixed;
+  z-index: 10;
+  bottom: 8px;
+  right: 8px;
+  opacity: 0;
+  animation: 0.5s ease-in 4s fade;
+  animation-fill-mode: forwards;
+}
+.attn:hover {
+  cursor: pointer;
+}
+
+.success-icon {
+  position: fixed;
+  z-index: 9;
+  bottom: 8px;
+  right: 8px;
+  opacity: 0;
+}
+
+#alpha-c {
+  color: white;
+  visibility: hidden;
+}
+
+#lander {
+  color: white;
+  display: none;
+  width: 24rem;
+}
+
+.request-input {
+  background: rgba(0, 0, 0, 0);
+  border: none;
+  outline: none;
+  font-size: 15pt;
+  overflow-x: hidden;
+  color: white;
+  width: 14rem;
+  text-align: right;
+}
+
+#lander a {
+  color: white;
+}
+#lander a:hover {
+  color: white;
+}
+#lander a:visited {
+  color: white;
+}
+#lander a:link {
+  color: white;
+}

@@ -1,0 +1,9 @@
+{
+    "include": [
+        "lander/assets/scripts/**/*.ts"
+    ],
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "target": "es5"
+    }
+}
