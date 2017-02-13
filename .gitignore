@@ -160,5 +160,6 @@ run-prod.sh
 run-dev.sh
 static/
 !static/.gitkeep
-lander/static/
-!lander/static/.gitkeep
+lander/static/js
+lander/static/css
+!lander/static/
