@@ -1,5 +1,6 @@
 from django.shortcuts import render
-# from django.contrib.gis.geoip2 import GeoIP2
+from django.contrib.gis.geoip2 import GeoIP2
+from geoip2.errors import AddressNotFoundError
 
 
 def get_client_ip(request):
@@ -12,14 +13,16 @@ def get_client_ip(request):
 
 
 def index(request):
-    # g = GeoIP2()
+    g = GeoIP2()
     ip = get_client_ip(request)
-    # request_info = g.city(ip)
-    request_info = dict()
-    request_info['country'] = ''
-    request_info['city'] = ''
-    request_info['region'] = ''
-    request_info['latitude'] = 0
-    request_info['longitude'] = 0
+    try:
+        request_info = g.city(ip)
+    except AddressNotFoundError:
+        request_info = dict()
+        request_info['country'] = ''
+        request_info['city'] = ''
+        request_info['region'] = ''
+        request_info['latitude'] = 0
+        request_info['longitude'] = 0
     request_info['ip_address'] = ip
     return render(request, 'index.html', request_info)

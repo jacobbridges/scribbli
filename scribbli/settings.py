@@ -20,7 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('APP_ENV')
+if os.getenv('APP_ENV', '').lower() == 'production':
+    SECRET_KEY = os.getenv('APP_KEY')
+else:
+    print('APP_ENV is not "production", assuming development environment')
+    SECRET_KEY = '1234'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -131,3 +135,6 @@ STATICFILES_DIRS = [
 
 # GeoIP2 Data
 GEOIP_PATH = os.path.join(BASE_DIR, "geo-data")
+
+# CSRF enabled on insecure (http://) and secure (https://) protocols
+CSRF_COOKIE_SECURE = False

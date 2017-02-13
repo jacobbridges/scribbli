@@ -1,5 +1,6 @@
-import { validateEmail } from "../utils/validation";
+import { validateEmail } from '../utils/validation';
 const TweenLite = require('../../vendor/TweenMax');
+const Cookies = require('js-cookie');
 
 interface WindowWithUserData extends Window {
   userData: any;
@@ -8,7 +9,7 @@ interface WindowWithUserData extends Window {
 export const handleSubmitEmail = function(event: Event) {
 
   event.preventDefault();
-  const requestInput = <HTMLInputElement>document.querySelector(".request-input");
+  const requestInput = <HTMLInputElement>document.querySelector('.request-input');
 
   if (!validateEmail(requestInput.value, ['hemingway@gmail.com'])) {
     requestInput.style.color = '#f96377';
@@ -23,15 +24,17 @@ export const handleSubmitEmail = function(event: Event) {
   document.getElementById('lander').style.display = 'none';
   (<HTMLElement>document.querySelector('.attn')).style.display = 'none';
   (<HTMLElement>document.querySelector('.success-icon')).style.opacity = '1';
-  TweenLite.to("body", 0, {backgroundColor:"white"});
-  TweenLite.to(".title", 0, {color: "#2E3D48"});
+  TweenLite.to('body', 0, {backgroundColor:'white'});
+  TweenLite.to('.title', 0, {color: '#2E3D48'});
 
   const req = new XMLHttpRequest();
-  req.addEventListener("load", function() { console.log(this.responseText); });
-  req.open("POST", "/api" + "/save_email");
+  req.addEventListener('load', function() { console.log(this.responseText); });
+  req.open('POST', '/api' + '/signup' + '/');
   const data = (<WindowWithUserData>window).userData;
   data['email'] = requestInput.value;
-  req.setRequestHeader("Content-Type", "application/json");
+  req.setRequestHeader('Content-Type', 'application/json');
+  const csrfToken = Cookies.get('csrftoken');
+  req.setRequestHeader('X-CSRFToken', csrfToken);
   req.send(JSON.stringify(data));
 
 };
