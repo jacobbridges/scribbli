@@ -15,7 +15,6 @@ export const invitationModel = {
       url: '/api/invitation/' + encodeURIComponent(unik),
       withCredentials: true,
     })
-      // .then(function(apiResponse: any) { apiResponse.data = JSON.parse(apiResponse.data); return apiResponse; })
       .then(function(apiResponse: SiteApi.Responses.Invitation) {
 
         if (apiResponse.id === 'success')
