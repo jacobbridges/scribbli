@@ -1,0 +1,48 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+
+  <!-- Meta Tags -->
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="description" content="Online universe for writers to create stories.">
+  <meta name="author" content="Jacob Bridges">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Title -->
+  <title>⍺Scribbli</title>
+
+  <!-- iOS App Icon -->
+  <link rel="apple-touch-icon" href="{% static 'lander/img/apple-touch-icon.png' %}">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="{% static 'alpha/css/main.css' %}">
+</head>
+
+<body>
+<!--[if lte IE 10]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+<![endif]-->
+
+<!-- Generate a CSRF token to be used in XHR requests. -->
+{% csrf_token %}
+
+<!-- Load uglified JS file -->
+<script src="{% static 'alpha/js/mini.js' %}"></script>
+
+<!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+{% comment %}
+<script>
+  window.ga = function () {
+    ga.q.push(arguments)
+  };
+  ga.q = [];
+  ga.l = +new Date;
+  ga('create', 'UA-XXXXX-Y', 'auto');
+  ga('send', 'pageview')
+</script>
+<script src="https://www.google-analytics.com/analytics.js" async defer></script>
+{% endcomment %}
+</body>
+</html>

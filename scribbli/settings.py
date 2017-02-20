@@ -29,13 +29,14 @@ else:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.99.100', 'scribb.li']
+ALLOWED_HOSTS = ['192.168.99.100', 'scribb.li', 'localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     "lander.apps.LanderConfig",
+    "alpha.apps.AlphaConfig",
     "siteapi.apps.SiteapiConfig",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -131,6 +132,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "lander/static"),
+    os.path.join(BASE_DIR, "alpha/static"),
 ]
 
 # GeoIP2 Data

@@ -25,4 +25,4 @@ def index(request):
         request_info['latitude'] = 0
         request_info['longitude'] = 0
     request_info['ip_address'] = ip
-    return render(request, 'index.html', request_info)
+    return render(request, 'lander/index.html', request_info)
