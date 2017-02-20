@@ -15,7 +15,7 @@ export const LoginView = {
         m('form.login.fade-second', [
           m('.input-block', [
             m('input', {
-              name: 'password',
+              name: 'email',
               type: 'text',
               placeholder: 'Email',
               autocomplete: 'off'
