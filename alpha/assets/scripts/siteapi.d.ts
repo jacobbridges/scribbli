@@ -11,10 +11,23 @@ export namespace SiteApi {
     fields: T;
   }
 
+  interface DataError {
+    message: string;
+    extra?: any;
+  }
+  export interface ErrorResponse {
+    id: string;
+    data: DataError;
+  }
+
   export namespace Responses {
 
-    export interface Invitation extends Response {
+    export interface LoadInvitation extends Response {
       data: Model<Elements.Invitation>[];
+    }
+
+    export interface CreateWriter extends Response {
+      data: Model<Elements.Writer>[];
     }
 
   }
@@ -24,6 +37,14 @@ export namespace SiteApi {
     export interface Invitation {
       email: string;
       date_expires: string;
+      accepted: boolean;
+      unik: string;
+    }
+
+    export interface Writer {
+      email: string;
+      name: string;
+      date_created: string;
     }
 
   }

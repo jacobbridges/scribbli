@@ -1,6 +1,6 @@
 import json
 
-from django.core import serializers
+from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.views import View
 
@@ -24,6 +24,6 @@ class AlphaInvitationView(View):
             ))
         return JsonResponse(dict(
             id='success',
-            data=json.loads(serializers.serialize('json', [invitation],
-                                                  fields=('email', 'date_expires')))
+            data=json.loads(serialize('json', [invitation],
+                                      fields=('email', 'date_expires', 'accepted', 'unik')))
         ))

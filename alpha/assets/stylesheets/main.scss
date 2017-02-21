@@ -57,11 +57,20 @@ input[type=password]:focus {
   border-bottom: solid 2px #969696;
 }
 input[type=text]:disabled {
-  color: #E0E0E0;
-  border-bottom: solid 2px #E0E0E0;
+  border-bottom: solid 2px #C9C9C9;
+  background-color: #E0E0E0;
+}
+input[type=text]:disabled::-webkit-input-placeholder {
+  color: #2E3D48;
+}
+input[type=text]:disabled::-moz-placeholder {
+  color: #2E3D48;
+}
+input[type=text]:disabled:-ms-input-placeholder {
+  color: #2E3D48;
 }
 
-input[type=submit] {
+input[type=submit].preauth {
   padding: 0.5rem;
   background: white;
   border: 2px solid #c9c9c9;
@@ -69,10 +78,17 @@ input[type=submit] {
   color: #969696;
   transition: color 0.3s, border 0.3s;
 }
-input[type=submit]:hover {
+input[type=submit].preauth:hover {
   cursor: pointer;
   color: #2E3D48;
   border: solid 2px #969696;
+}
+input[type=submit].preauth:disabled {
+  color: rgba(145, 196, 219, 0.64);
+  border: solid 2px #c7c7c7;
+}
+input[type=submit].preauth:disabled:hover {
+  cursor: default;
 }
 
 .input-block {
