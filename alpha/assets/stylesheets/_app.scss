@@ -1,0 +1,16 @@
+// -------------------------------------------------------------------------------------------------
+// Imports
+
+// Import scribbli variables
+@import 'variables';
+
+// -------------------------------------------------------------------------------------------------
+// App namespace
+
+.app {
+  color: $light-text-normal;
+  background-color: $light-background-color;
+  letter-spacing: $letter-spacing;
+  font-family: $font-family-app;
+}
+

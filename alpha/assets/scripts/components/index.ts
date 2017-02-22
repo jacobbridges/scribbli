@@ -1,0 +1,1 @@
+export { hero, darkHero } from './hero';

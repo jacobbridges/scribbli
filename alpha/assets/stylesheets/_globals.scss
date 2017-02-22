@@ -1,0 +1,6 @@
+// Remove annoying border that some browsers will place on inputs
+input { outline: none; }
+input:focus { outline: none; }
+
+// Body should have no margin and no padding
+body { margin: 0; padding: 0; }

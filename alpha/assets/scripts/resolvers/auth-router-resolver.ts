@@ -20,6 +20,7 @@ export const checkAuth = (view: MithrilView) => ({
     if (!token) {
 
       console.log('No authentication token found, rerouting to /login!');
+      document.querySelector('body').className = 'pre-auth';
       m.route.set('/login');
       return;
 
@@ -50,16 +51,19 @@ export const checkAuth = (view: MithrilView) => ({
           wd.i().name = successResponse.data.name;
           wd.i().scopes = successResponse.data.scopes;
 
+          document.querySelector('body').className = 'app';
           return view;
 
         } else if (apiResponse.id === 'failure') {
 
           console.log('There was an error retrieving the writers data!', apiResponse);
+          document.querySelector('body').className = 'pre-auth';
           m.route.set('/login');
 
         } else {
 
           console.log('Siteapi did not response as expected..');
+          document.querySelector('body').className = 'pre-auth';
           m.route.set('/login');
 
         }
@@ -68,6 +72,7 @@ export const checkAuth = (view: MithrilView) => ({
 
     }
 
+    document.querySelector('body').className = 'app';
     return view;
 
   }

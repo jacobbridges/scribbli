@@ -1,0 +1,130 @@
+@import 'animations';
+
+// -------------------------------------------------------------------------------------------------
+// The "unauthorized" pages in Scribbli have a slightly different theme.
+.pre-auth {
+  font-family: 'Open Sans', sans-serif;
+  letter-spacing: normal;
+  background-color: white;
+}
+
+.pre-auth.header-cover {
+  height: 100%;
+  width: 100%;
+}
+
+.pre-auth .content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pre-auth .brand {
+
+  h1 {
+    font-size: 64pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  small {
+    margin-left: 8px;
+  }
+
+}
+
+.pre-auth form.login {
+  display: block;
+  width: 21rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 2rem;
+}
+
+.pre-auth #alpha-c {
+  color: #ce1010;
+}
+
+.pre-auth input[type=text],
+.pre-auth input[type=password] {
+  padding: 2px;
+  border: none;
+  border-bottom: solid 2px #c9c9c9;
+  transition: border 0.3s;
+}
+.pre-auth input[type=text]:focus,
+.pre-auth input[type=password]:focus {
+  border-bottom: solid 2px #969696;
+}
+.pre-auth input[type=text]:disabled {
+  border-bottom: solid 2px #C9C9C9;
+  background-color: #E0E0E0;
+}
+.pre-auth input[type=text]:disabled::-webkit-input-placeholder {
+  color: #2E3D48;
+}
+.pre-auth input[type=text]:disabled::-moz-placeholder {
+  color: #2E3D48;
+}
+.pre-auth input[type=text]:disabled:-ms-input-placeholder {
+  color: #2E3D48;
+}
+
+.pre-auth input[type=submit].preauth {
+  padding: 0.5rem;
+  background: white;
+  border: 2px solid #c9c9c9;
+  border-radius: 5px;
+  color: #969696;
+  transition: color 0.3s, border 0.3s;
+}
+.pre-auth input[type=submit].preauth:hover {
+  cursor: pointer;
+  color: #2E3D48;
+  border: solid 2px #969696;
+}
+.pre-auth input[type=submit].preauth:disabled {
+  color: rgba(145, 196, 219, 0.64);
+  border: solid 2px #c7c7c7;
+}
+.pre-auth input[type=submit].preauth:disabled:hover {
+  cursor: default;
+}
+
+.pre-auth .input-block {
+  margin: 1.5rem auto;
+
+  input {
+    font-size: 18pt;
+    width: 100%;
+  }
+
+}
+
+.pre-auth .helpful-links {
+  margin-top: -1.2rem;
+  font-size: 10pt;
+  a { color: lighten(#1717EF, 10%); }
+  a:hover { color: lighten(#1717EF, 20%); }
+  a:visited { color: darken(#1717EF, 20%); }
+}
+
+.pre-auth .helpful-links a:first-child {
+  float: left;
+}
+.pre-auth .helpful-links a:last-child {
+  float: right;
+}
+
+.pre-auth .fade {
+  opacity: 0;
+  animation: 0.75s ease-in 0.1s fade;
+  animation-fill-mode: forwards;
+}
+
+.pre-auth .fade-second {
+  opacity: 0;
+  animation: 0.75s ease-in 0.5s fade;
+  animation-fill-mode: forwards;
+}
