@@ -30,6 +30,10 @@ export namespace SiteApi {
       data: Model<Elements.Writer>[];
     }
 
+    export interface GetWriterData extends Response {
+      data: Elements.WriterData;
+    }
+
   }
 
   export namespace Elements {
@@ -45,6 +49,12 @@ export namespace SiteApi {
       email: string;
       name: string;
       date_created: string;
+    }
+
+    export interface WriterData {
+      email: string;
+      name: string;
+      scopes: string[];
     }
 
   }

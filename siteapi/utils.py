@@ -1,4 +1,11 @@
 import re
+import jwt
+
+from datetime import timedelta
+
+from django.utils.timezone import now
+
+from scribbli.settings import SECRET_KEY
 
 
 # --------------------------------------------------------------------------------------------------
@@ -22,3 +29,20 @@ def make_error(error, extra=None):
     if extra:
         return dict(id='failure', data=dict(message=error, extra=extra))
     return dict(id='failure', data=dict(message=error))
+
+
+def make_token(email, name, scopes):
+    return jwt.encode({
+        'email': email,
+        'name': name,
+        'scopes': scopes,
+    }, SECRET_KEY, algorithm='HS256')
+
+
+def parse_token(token):
+    decoded = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    return decoded['email'], decoded['name'], decoded['scopes']
+
+
+def one_day_from_now():
+    return now() + timedelta(days=1)

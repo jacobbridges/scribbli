@@ -15,7 +15,11 @@ const doubletapState = {
 
 export const RegisterView = {
 
-  oninit: function(vnode: any) { invitationModel.load(decodeURIComponent(vnode.attrs.unik)) },
+  oninit: function(vnode: any) {
+    invitationModel.error = null;
+    invitationModel.load(decodeURIComponent(vnode.attrs.unik));
+    writerModel.error = null;
+  },
 
   view: function() {
 
@@ -36,18 +40,6 @@ export const RegisterView = {
 
     }
 
-    // If the current invitation is expired, show an error message
-    if (new Date() >= new Date(invitationModel.current.date_expires)) {
-
-      return m('.header-cover', [
-        m('.content', [
-          m('h2', 'Expired'),
-          m('p.text-danger', 'This invitation has expired.'),
-        ]),
-      ]);
-
-    }
-
     // If the current invitation has already been accepted, show an error message
     if (invitationModel.current.accepted) {
 
@@ -55,6 +47,18 @@ export const RegisterView = {
         m('.content', [
           m('h2', 'Invitation already accepted.'),
           m('p.text-danger', 'This invitation has already been accepted.'),
+        ]),
+      ]);
+
+    }
+
+    // If the current invitation is expired, show an error message
+    if (new Date() >= new Date(invitationModel.current.date_expires)) {
+
+      return m('.header-cover', [
+        m('.content', [
+          m('h2', 'Expired'),
+          m('p.text-danger', 'This invitation has expired.'),
         ]),
       ]);
 
@@ -72,6 +76,7 @@ export const RegisterView = {
             m('span#alpha-c', '⍺'),
             'Scribbli',
           ]),
+          m('small.text-danger', { style: { color: '#F96377' } }, writerModel.error),
         ]),
         m('form.login.fade-second', { onsubmit: writerModel.create }, [
           m('.input-block', [
@@ -90,7 +95,7 @@ export const RegisterView = {
               type: 'text',
               placeholder: 'Pseudonym',
               autocomplete: 'off',
-              oninput: m.withAttr("value", writerModel.setName),
+              oninput: m.withAttr('value', writerModel.setName),
               value: writerModel.current.name,
               style: { color: writerModel.namePassValidation() ? '#2E3D48' : '#F96377' },
             }),

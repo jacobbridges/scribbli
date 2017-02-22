@@ -22,9 +22,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 if os.getenv('APP_ENV', '').lower() == 'production':
     SECRET_KEY = os.getenv('APP_KEY')
+    COOKIE_SALT = os.getenv('COOKIE_SALT')
 else:
     print('APP_ENV is not "production", assuming development environment')
-    SECRET_KEY = '1234'
+    SECRET_KEY = 'so secret'
+    COOKIE_SALT = 'Salt is not good on cookies!!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

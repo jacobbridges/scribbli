@@ -1,12 +1,7 @@
-from django.utils.timezone import now
-from datetime import timedelta
 from django.db import models
 
-from .writer import Writer
-
-
-def one_day_from_now():
-    return now() + timedelta(days=1)
+from siteapi.utils import one_day_from_now
+from siteapi.models.writer import Writer
 
 
 class AlphaInvitation(models.Model):

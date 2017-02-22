@@ -30,6 +30,12 @@ export const invitationModel = {
 
         invitationModel.isLoaded = true;
 
+      }).catch((error: any) => {
+
+        invitationModel.error = 'Invitation does not exist!';
+        invitationModel.current = null;
+        invitationModel.isLoaded = true;
+
       });
 
   },

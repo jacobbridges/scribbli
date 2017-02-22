@@ -118,7 +118,7 @@ gulp.task('lander:ts:watch', function () {
  **************************************************************************************************/
 
 gulp.task('alpha:sass', function () {
-  return scssGulpPipeline(gulp, './alpha/assets/stylesheets/**/*.scss', './alpha/static/alpha/css');
+  return scssGulpPipeline(gulp, './alpha/assets/stylesheets/main.scss', './alpha/static/alpha/css');
 });
 gulp.task('alpha:ts', function () {
   return tsGulpPipeline(gulp, browserify, ['./alpha/assets/scripts/main.ts'], './alpha/static/alpha/js');

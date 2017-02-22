@@ -1,4 +1,5 @@
 import { pseudonymRegexCheck, emailRegexCheck } from "../utils/validation";
+import { writerDataSingleton as wd } from './singletons/writer-data';
 const m = require('mithril');
 const Cookies = require('js-cookie');
 
@@ -61,9 +62,9 @@ export const writerModel = {
   // Does the writer pass validation
   passValidation: () => {
 
-    return writerModel.namePassValidation()
-      && writerModel.emailPassValidation()
-      && writerModel.passwordPassValidation();
+    return writerModel.namePassValidation() &&
+      writerModel.emailPassValidation() &&
+      writerModel.passwordPassValidation();
 
   },
 
@@ -104,7 +105,10 @@ export const writerModel = {
             date_created: new Date(writerObj.date_created),
           };
 
-          // TODO: NEED TO SET EMAIL TO STATE AND REDIRECT TO HOMEPAGE
+          // Set the writer's email to local storage then redirect to login page
+          wd.i().email = writerObj.email;
+          m.route.set('/login');
+          return; // Return to ensure no more code is ran in this function
 
         } else if (apiResponse.id === 'failure') {
 
@@ -122,6 +126,58 @@ export const writerModel = {
         }
 
       });
+
+  },
+
+  // Authenticate against the site api
+  login: (event: Event) => {
+
+    // Prevent the form from submitting
+    event.preventDefault();
+
+    // Get the data from the current writer
+    const { email, password } = writerModel.current;
+
+    // Get the CSRF token from the cookie
+    const csrfToken = Cookies.get('csrftoken');
+
+    // Attempt to authenticate against the siteapi
+    return m.request({
+      method: 'POST',
+      url: '/api/login/',
+      headers: { 'X-CSRFToken': csrfToken },
+      data: { email, password },
+    }).then((apiResponse: SiteApi.Response) => {
+
+      if (apiResponse.id === 'success') {
+
+        // 1. Store select information from the web token in local storage
+        let successReponse = apiResponse as SiteApi.Responses.GetWriterData;
+        wd.i().name = successReponse.data.name;
+        wd.i().email = successReponse.data.email;
+        wd.i().scopes = successReponse.data.scopes;
+
+        // 2. Route to the homepage
+        m.route.set('/home');
+        return;
+
+      } else if (apiResponse.id === 'failure') {
+
+        let failedResponse = apiResponse as SiteApi.ErrorResponse;
+        writerModel.error = failedResponse.data.message;
+
+      } else {
+
+        writerModel.error = 'The server had a hiccup. Try again later.';
+
+      }
+
+    }).catch((err: any) => {
+
+      writerModel.error = 'The server had a hiccup. Try again later.';
+      console.error('Server had an error!', err);
+
+    });
 
   },
 
