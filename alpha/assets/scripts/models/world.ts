@@ -1,7 +1,7 @@
 /// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 const Cookies = require('js-cookie');
-import { get } from 'lodash';
+import { get, map } from 'lodash';
 
 import { worldRegexCheck,safeHTML } from '../utils/validation';
 import { WriterModel as wd } from './singletons/writer-data';
@@ -31,19 +31,19 @@ export const worldModel = {
 
   // Form errors
   form_errors: {
-    'default': '',
-    name: '',
-    description: '',
-    background: '',
-    system: '',
-    is_public: '',
+    'default': [] as string[],
+    name: [] as string[],
+    description: [] as string[],
+    background: [] as string[],
+    system: [] as string[],
+    is_public: [] as string[],
     clear: () => {
-      worldModel.form_errors.default = '';
-      worldModel.form_errors.name = '';
-      worldModel.form_errors.description = '';
-      worldModel.form_errors.background = '';
-      worldModel.form_errors.system = '';
-      worldModel.form_errors.is_public = '';
+      worldModel.form_errors.default = [];
+      worldModel.form_errors.name = [];
+      worldModel.form_errors.description = [];
+      worldModel.form_errors.background = [];
+      worldModel.form_errors.system = [];
+      worldModel.form_errors.is_public = [];
     }
   },
 
@@ -98,8 +98,6 @@ export const worldModel = {
       data: formData,
     }).then((apiResponse: SiteApi.Response<any>) => {
 
-      console.log(apiResponse);
-
       if (apiResponse.id === 'success') {
 
         let successResponse = apiResponse as SiteApi.Response<SiteApi.Elements.World>;
@@ -115,23 +113,34 @@ export const worldModel = {
 
         let errorResponse = apiResponse as SiteApi.ErrorResponse;
 
-        // Parse the errors from the response and display on the form
-        let allError = <string>get(errorResponse, 'data.extra.__all__[0]', null);
-        if (allError !== null) {
-          if (allError == 'World with this Name and Universe already exists.') {
-            worldModel.form_errors.default = 'Check the world name!';
-            worldModel.form_errors.name = 'A world with a similar name already exists.';
-          } else {
-            worldModel.form_errors.default = allError;
-          }
-        } else {
-          worldModel.form_errors.default = get(errorResponse, 'data.message', '');
+        // Copy errors from the response into the form
+        worldModel.form_errors.name = worldModel.form_errors.name
+          .concat(<string[]>map(get(errorResponse, 'data.extra.name', []), 'message'));
+        worldModel.form_errors.description = worldModel.form_errors.description
+          .concat(<string[]>map(get(errorResponse, 'data.extra.description', []), 'message'));
+        worldModel.form_errors.background = worldModel.form_errors.background
+          .concat(<string[]>map(get(errorResponse, 'data.extra.background', []), 'message'));
+        worldModel.form_errors.system = worldModel.form_errors.system
+          .concat(<string[]>map(get(errorResponse, 'data.extra.system', []), 'message'));
+        worldModel.form_errors.is_public = worldModel.form_errors.is_public
+          .concat(<string[]>map(get(errorResponse, 'data.extra.is_public', []), 'message'));
+
+        // Check if the "__all__" key is set in the response, which signals an error with the
+        // general form and not with a specific field
+        if (get(errorResponse, 'data.extra.__all__', null) !== null) {
+
+          worldModel.form_errors.default = worldModel.form_errors.default
+            .concat(<string[]>get(errorResponse, 'data.extra.__all__', []));
+
         }
-        worldModel.form_errors.name = get(errorResponse, 'data.extra.name[0].message', worldModel.form_errors.name);
-        worldModel.form_errors.description = get(errorResponse, 'data.extra.description[0].message', worldModel.form_errors.description);
-        worldModel.form_errors.background = get(errorResponse, 'data.extra.background[0].message', worldModel.form_errors.background);
-        worldModel.form_errors.system = get(errorResponse, 'data.extra.system[0].message', worldModel.form_errors.system);
-        worldModel.form_errors.is_public = get(errorResponse, 'data.extra.is_public[0].message', worldModel.form_errors.is_public);
+
+        // If the error "World with this Name and Universe already exists." is in the list of all
+        // errors, add a better error  to the name field.
+        if (worldModel.form_errors.default.indexOf('World with this Name and Universe already exists.') >= 0) {
+
+          worldModel.form_errors.name.push('A world with a similar name already exists.');
+
+        }
 
         document.querySelector('form').scrollIntoView();
 

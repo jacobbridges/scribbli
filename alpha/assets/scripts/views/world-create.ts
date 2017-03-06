@@ -84,13 +84,13 @@ export const worldCreateView = checkAuth({
         m('.row', [
           m('.col-12.col-md-9', [
             m('form.pb-3', { onsubmit: worldModel.create }, [
-              m('.text-danger.text-underline', [
-                m('u', worldModel.form_errors.default
-                  ? `Error: ${worldModel.form_errors.default}`
-                  : ''),
-              ]),
+              m('ul', worldModel.form_errors.default.map((err: string) => {
+                return m('li.text-danger', err);
+              })),
               // World Name
-              m('.form-group', { 'class': worldModel.form_errors.name ? 'has-danger' : '' }, [
+              m('.form-group', {
+                'class': worldModel.form_errors.name.length > 0 ? 'has-danger' : ''
+              }, [
                 m('label', { 'for': 'world-name' }, 'Name'),
                 m('input#world-name.form-control', {
                   type: 'text',
@@ -100,12 +100,16 @@ export const worldCreateView = checkAuth({
                   oninput: m.withAttr('value', worldModel.setName),
                   value: worldModel.form.name,
                   style: { color: worldModel.namePassValidation() ? colorTextNormal : colorTextDanger },
-                  'class': worldModel.form_errors.name ? 'form-control-danger' : '',
+                  'class': worldModel.form_errors.name.length > 0 ? 'form-control-danger' : '',
                 }),
-                m('.form-control-feedback', worldModel.form_errors.name),
+                m('ul', worldModel.form_errors.name.map((err: string) => {
+                  return m('li.form-control-feedback', err);
+                })),
               ]),
               // World Concept Art
-              m('.form-group', { 'class': worldModel.form_errors.background ? 'has-danger' : '' }, [
+              m('.form-group', {
+                'class': worldModel.form_errors.background.length > 0 ? 'has-danger' : ''
+              }, [
                 m('label', { 'for': 'world-concept-art' }, 'Concept Art (.jpg or .png)'),
                 m('input#world-concept-art.form-control-file', {
                   type: 'file',
@@ -113,12 +117,16 @@ export const worldCreateView = checkAuth({
                   accept: 'image/jpeg,image/png',
                   onchange: worldModel.setBackground,
                   'aria-describedby': 'world-concept-art-help',
-                  'class': worldModel.form_errors.background ? 'form-control-danger' : '',
+                  'class': worldModel.form_errors.background.length > 0 ? 'form-control-danger' : '',
                 }),
-                m('.form-control-feedback', worldModel.form_errors.background),
+                m('ul', worldModel.form_errors.background.map((err: string) => {
+                  return m('li.form-control-feedback', err);
+                })),
               ]),
               // World Privacy
-              m('fieldset.form-group', { 'class': worldModel.form_errors.is_public ? 'has-danger' : '' }, [
+              m('fieldset.form-group', {
+                'class': worldModel.form_errors.is_public.length > 0 ? 'has-danger' : ''
+              }, [
                 m('div', 'Privacy'),
                 m('.form-check', [
                   m('label.form-check-label', [
@@ -128,7 +136,7 @@ export const worldCreateView = checkAuth({
                       value: 'public',
                       style: 'margin-right: 6px;',
                       onchange: () => worldModel.setIsPublic(true),
-                      'class': worldModel.form_errors.is_public ? 'form-control-danger' : '',
+                      'class': worldModel.form_errors.is_public.length > 0 ? 'form-control-danger' : '',
                       checked: worldModel.form.is_public,
                     }),
                     m.trust('Public&mdash;this world will be listed on the Universe page. Other writers will still need your permission to create stories or destinations within this world.'),
@@ -142,16 +150,20 @@ export const worldCreateView = checkAuth({
                       value: 'private',
                       style: 'margin-right: 6px;' ,
                       onchange: () => worldModel.setIsPublic(false),
-                      'class': worldModel.form_errors.is_public ? 'form-control-danger' : '',
+                      'class': worldModel.form_errors.is_public.length > 0 ? 'form-control-danger' : '',
                       checked: !worldModel.form.is_public,
                     }),
                     m.trust('Private&mdash;this world will be unlisted. You will need to grant "read" permission to each writer that you want to see this world.'),
                   ]),
                 ]),
-                m('.form-control-feedback', worldModel.form_errors.is_public),
+                m('ul', worldModel.form_errors.is_public.map((err: string) => {
+                  return m('li.form-control-feedback', err);
+                })),
               ]),
               // World Description
-              m('.form-group', { 'class': worldModel.form_errors.description ? 'has-danger' : '' }, [
+              m('.form-group', {
+                'class': worldModel.form_errors.description.length > 0 ? 'has-danger' : ''
+              }, [
                 m('label', { 'for': 'world-description' }, 'Description'),
                 m('textarea#world-description.form-control', {
                   rows: 3,
@@ -160,14 +172,16 @@ export const worldCreateView = checkAuth({
                   oninput: m.withAttr('value', worldModel.setDescription),
                   value: worldModel.form.description,
                   style: { color: worldModel.descriptionPassValidation() ? colorTextNormal : colorTextDanger },
-                  'class': worldModel.form_errors.description ? 'form-control-danger' : '',
+                  'class': worldModel.form_errors.description.length > 0 ? 'form-control-danger' : '',
                 }),
                 m('small#world-description-help.form-text.text-muted', [
                   m('a.nolink', { href: '#', onclick: generatePreview }, 'Preview'),
                   m.trust(' &nbsp; '),
                   m('a.nolink', { href: '#', onclick: showFormattingHelp }, 'Formatting Help'),
                 ]),
-                m('.form-control-feedback', worldModel.form_errors.description),
+                m('ul', worldModel.form_errors.description.map((err: string) => {
+                  return m('li.form-control-feedback', err);
+                })),
                 m('#formattingHelp', { style: { display: windowState.formatting_help_display } }, [
                   m('h5.pt-3', 'Formatting Help'),
                   m('pre', 'The following tags are currently supported: [b], [i], [u], [img], and [url].'),
