@@ -62,6 +62,8 @@ class WorldView(View):
         try:
             world.save()
         except IntegrityError as e:
+            background.delete()
+            thumbnail.delete()
             if 'slug' in str(e):
                 return JsonResponse(make_error('Check the world name!', extra=dict(
                     name=[dict(message='A world with a similar name already exists.')])))
