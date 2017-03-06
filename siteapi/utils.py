@@ -78,14 +78,14 @@ def make_thumbnail(img_path, width=200, height=200):
     for orientation in ExifTags.TAGS.keys():
         if ExifTags.TAGS[orientation] == 'Orientation':
             break
-    exif = dict(image._getexif().items())
-
-    if exif[orientation] == 3:
-        image = image.rotate(180, expand=True)
-    elif exif[orientation] == 6:
-        image = image.rotate(270, expand=True)
-    elif exif[orientation] == 8:
-        image = image.rotate(90, expand=True)
+    if image._getexif() is not None:
+        exif = dict(image._getexif().items())
+        if exif[orientation] == 3:
+            image = image.rotate(180, expand=True)
+        elif exif[orientation] == 6:
+            image = image.rotate(270, expand=True)
+        elif exif[orientation] == 8:
+            image = image.rotate(90, expand=True)
     image.thumbnail((width, height), Image.ANTIALIAS)
     in_memory_img = BytesIO()
     image.save(in_memory_img, pillow_ext, quality=90)
