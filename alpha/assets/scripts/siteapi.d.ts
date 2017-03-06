@@ -1,8 +1,8 @@
 export namespace SiteApi {
 
-  export interface Response {
+  export interface Response<T> {
     id: string;
-    data: any;
+    data: T;
   }
 
   export interface Model<T> {
@@ -18,22 +18,6 @@ export namespace SiteApi {
   export interface ErrorResponse {
     id: string;
     data: DataError;
-  }
-
-  export namespace Responses {
-
-    export interface LoadInvitation extends Response {
-      data: Model<Elements.Invitation>[];
-    }
-
-    export interface CreateWriter extends Response {
-      data: Model<Elements.Writer>[];
-    }
-
-    export interface GetWriterData extends Response {
-      data: Elements.WriterData;
-    }
-
   }
 
   export namespace Elements {
@@ -55,6 +39,20 @@ export namespace SiteApi {
       email: string;
       name: string;
       scopes: string[];
+    }
+
+    export interface World {
+      name: string;
+      slug: string;
+      description: string;
+      owner: string;
+      universe: number;
+      background_path: string;
+      thumbnail_path: string;
+      system: number;
+      is_public: boolean;
+      date_created: Date;
+      date_modified: Date;
     }
 
   }

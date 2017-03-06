@@ -1,15 +1,13 @@
-import { isUndefined } from "util";
+/// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 const Cookies: Cookies.CookiesStatic = require('js-cookie');
 
+import { isUndefined } from 'util';
 import { SiteApi } from '../siteapi';
-import { writerDataSingleton as wd } from '../models/singletons/writer-data';
+import { WriterModel as wm } from '../models/singletons/writer-data';
 
-interface MithrilView {
-  view(...args: any[]): Mithril.VirtualElement;
-}
 
-export const checkAuth = (view: MithrilView) => ({
+export const checkAuth = (view: Mithril.Component<any, any>) => ({
 
   onmatch: function() {
 
@@ -20,7 +18,6 @@ export const checkAuth = (view: MithrilView) => ({
     if (!token) {
 
       console.log('No authentication token found, rerouting to /login!');
-      document.querySelector('body').className = 'pre-auth';
       m.route.set('/login');
       return;
 
@@ -28,7 +25,7 @@ export const checkAuth = (view: MithrilView) => ({
 
     console.log('Authentication token found!');
     // If the token was in the cookies, verify that the writer data exists
-    if (isUndefined(wd.i().email) || isUndefined(wd.i().name || isUndefined(wd.i().scopes))) {
+    if (isUndefined(wm.i.email) || isUndefined(wm.i.name || isUndefined(wm.i.scopes))) {
 
       console.log('User data not found in singleton, retrieving from siteapi...');
 
@@ -41,15 +38,15 @@ export const checkAuth = (view: MithrilView) => ({
         url: '/api/login/',
         headers: { 'X-CSRFToken': csrfToken },
         withCredentials: true,
-      }).then((apiResponse: SiteApi.Response) => {
+      }).then((apiResponse: SiteApi.Response<any>) => {
 
         if (apiResponse.id === 'success') {
 
           console.log('Got data!', apiResponse.data);
-          let successResponse = apiResponse as SiteApi.Responses.GetWriterData;
-          wd.i().email = successResponse.data.email;
-          wd.i().name = successResponse.data.name;
-          wd.i().scopes = successResponse.data.scopes;
+          let successResponse = apiResponse as SiteApi.Response<SiteApi.Elements.WriterData>;
+          wm.i.email = successResponse.data.email;
+          wm.i.name = successResponse.data.name;
+          wm.i.scopes = successResponse.data.scopes;
 
           document.querySelector('body').className = 'app';
           return view;
@@ -57,13 +54,11 @@ export const checkAuth = (view: MithrilView) => ({
         } else if (apiResponse.id === 'failure') {
 
           console.log('There was an error retrieving the writers data!', apiResponse);
-          document.querySelector('body').className = 'pre-auth';
           m.route.set('/login');
 
         } else {
 
           console.log('Siteapi did not response as expected..');
-          document.querySelector('body').className = 'pre-auth';
           m.route.set('/login');
 
         }

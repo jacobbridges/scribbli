@@ -1,14 +1,20 @@
-import { isUndefined } from "util";
+/// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 
+import { isUndefined } from 'util';
 import { writerModel } from '../models/writer';
-import { writerDataSingleton as wd } from '../models/singletons/writer-data';
+import { WriterModel as wm } from '../models/singletons/writer-data';
 
 
 export const LoginView = {
 
   oninit: () => {
-    if (!isUndefined(wd.i().email)) writerModel.setEmail(wd.i().email);
+
+    // Change the body's class to pre-auth styling
+    document.querySelector('body').className = 'pre-auth';
+
+    // If the writer's email is set in the singleton, set it in the writer's model
+    if (!isUndefined(wm.i.email)) writerModel.setEmail(wm.i.email);
     writerModel.error = null;
   },
 

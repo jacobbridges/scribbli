@@ -1,3 +1,4 @@
+/// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 
 import { SiteApi } from '../siteapi';
@@ -21,7 +22,7 @@ export const invitationModel = {
       url: '/api/invitation/' + encodeURIComponent(unik),
       withCredentials: true,
     })
-      .then(function(apiResponse: SiteApi.Responses.LoadInvitation) {
+      .then(function(apiResponse: SiteApi.Response<SiteApi.Model<SiteApi.Elements.Invitation>[]>) {
 
         if (apiResponse.id === 'success')
           invitationModel.current = apiResponse.data[0].fields;
@@ -30,7 +31,7 @@ export const invitationModel = {
 
         invitationModel.isLoaded = true;
 
-      }).catch((error: any) => {
+      }).catch(() => {
 
         invitationModel.error = 'Invitation does not exist!';
         invitationModel.current = null;

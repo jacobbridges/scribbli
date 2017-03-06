@@ -1,19 +1,20 @@
+/// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 
 import * as Components from '../components';
-import { writerDataSingleton as wd } from '../models/singletons/writer-data';
+import { WriterModel as wm } from '../models/singletons/writer-data';
 import { checkAuth } from '../resolvers/auth-router-resolver';
 
 
 export const homeView = checkAuth({
 
-  view: function(vnode: Mithril.VirtualElement) {
+  view: function(vnode: Mithril.Vnode<any, any>) {
 
     return m('div', [
       m(Components.darkHero, [
-        m('h4', `Welcome to Scribbli, ${wd.i().name}!`),
+        m('h4', `Welcome to Scribbli, ${wm.i.name}!`),
         m('nav.nav', [
-          // m('a.nav-link href=[/universe]', { oncreate: m.route.link }, 'Universe'),
+          m('a.nav-link', { href: '/universe', oncreate: m.route.link }, 'Universe'),
           // m('a.nav-link href=[/stories]', { oncreate: m.route.link }, 'Stories'),
           // m('a.nav-link href=[/characters]', { oncreate: m.route.link }, 'Characters'),
           // m('a.nav-link href=[/writers]', { oncreate: m.route.link }, 'Writers'),

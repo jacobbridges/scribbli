@@ -1,9 +1,14 @@
 import re
 import jwt
+import json
 
 from datetime import timedelta
+from PIL import Image, ExifTags
+from io import BytesIO
 
 from django.utils.timezone import now
+from django.http import JsonResponse
+from django.core.files.images import ImageFile
 
 from scribbli.settings import SECRET_KEY
 
@@ -46,3 +51,42 @@ def parse_token(token):
 
 def one_day_from_now():
     return now() + timedelta(days=1)
+
+
+def ensure_json(func):
+
+    def wrapped(instance, request, *args, **kwargs):
+        if not request.content_type == 'application/json':
+            return JsonResponse(make_error('Expected application/json'))
+        try:
+            kwargs['parsed_data'] = json.loads(request.read().decode('utf8'))
+        except json.JSONDecodeError:
+            return JsonResponse(make_error('Expected application/json'))
+        func(instance, request, *args, **kwargs)
+
+    return wrapped
+
+
+def make_thumbnail(img_path, width=200, height=200):
+    image = Image.open(img_path)
+    img_ext = img_path.split('.')[-1]
+    pillow_ext = {
+        'png': 'PNG',
+        'jpg': 'JPEG',
+        'jpeg': 'JPEG',
+    }.get(img_ext, None)
+    for orientation in ExifTags.TAGS.keys():
+        if ExifTags.TAGS[orientation] == 'Orientation':
+            break
+    exif = dict(image._getexif().items())
+
+    if exif[orientation] == 3:
+        image = image.rotate(180, expand=True)
+    elif exif[orientation] == 6:
+        image = image.rotate(270, expand=True)
+    elif exif[orientation] == 8:
+        image = image.rotate(90, expand=True)
+    image.thumbnail((width, height), Image.ANTIALIAS)
+    in_memory_img = BytesIO()
+    image.save(in_memory_img, pillow_ext, quality=90)
+    return ImageFile(in_memory_img, name=('thumbnail.' + img_ext))

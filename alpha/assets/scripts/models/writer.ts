@@ -1,9 +1,11 @@
-import { pseudonymRegexCheck, emailRegexCheck } from "../utils/validation";
-import { writerDataSingleton as wd } from './singletons/writer-data';
+/// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 const Cookies = require('js-cookie');
 
+import { pseudonymRegexCheck, emailRegexCheck } from '../utils/validation';
+import { WriterModel as wm } from './singletons/writer-data';
 import { SiteApi } from '../siteapi';
+
 
 // -------------------------------------------------------------------------------------------------
 // Interfaces
@@ -39,7 +41,7 @@ export const writerModel = {
   namePassValidation: () => {
 
     const name = writerModel.current.name;
-    return (typeof name === 'string') && pseudonymRegexCheck(name) && name.length <= 100;
+    return (typeof name === 'string') && pseudonymRegexCheck(name) && name.length <= 40;
 
   },
 
@@ -88,12 +90,12 @@ export const writerModel = {
       headers: { 'X-CSRFToken': csrfToken },
       data: { email, name, password, unik: (unik ? unik : null) },
     })
-      .then(function(apiResponse: SiteApi.Response) {
+      .then(function(apiResponse: SiteApi.Response<any>) {
 
         if (apiResponse.id === 'success') {
 
           // Assign the api response to type "successfully created writer"
-          let successResponse = apiResponse as SiteApi.Responses.CreateWriter;
+          let successResponse = apiResponse as SiteApi.Response<SiteApi.Model<SiteApi.Elements.Writer>[]>;
 
           // Create a reference to the created writer object in the response (for easy reference)
           const writerObj = successResponse.data[0].fields;
@@ -106,7 +108,7 @@ export const writerModel = {
           };
 
           // Set the writer's email to local storage then redirect to login page
-          wd.i().email = writerObj.email;
+          wm.i.email = writerObj.email;
           m.route.set('/login');
           return; // Return to ensure no more code is ran in this function
 
@@ -147,15 +149,15 @@ export const writerModel = {
       url: '/api/login/',
       headers: { 'X-CSRFToken': csrfToken },
       data: { email, password },
-    }).then((apiResponse: SiteApi.Response) => {
+    }).then((apiResponse: SiteApi.Response<any>) => {
 
       if (apiResponse.id === 'success') {
 
         // 1. Store select information from the web token in local storage
-        let successReponse = apiResponse as SiteApi.Responses.GetWriterData;
-        wd.i().name = successReponse.data.name;
-        wd.i().email = successReponse.data.email;
-        wd.i().scopes = successReponse.data.scopes;
+        let successReponse = apiResponse as SiteApi.Response<SiteApi.Elements.WriterData>;
+        wm.i.name = successReponse.data.name;
+        wm.i.email = successReponse.data.email;
+        wm.i.scopes = successReponse.data.scopes;
 
         // 2. Route to the homepage
         m.route.set('/home');

@@ -14,3 +14,53 @@
   font-family: $font-family-app;
 }
 
+// Section Headings
+// ------- --------
+.app .heading {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+}
+.app .heading h1 {
+  margin-left: 1rem;
+}
+.app .heading .heading-text {
+  margin-left: 1rem;
+}
+.app .heading .icon {
+  position: relative;
+  bottom: 0.4rem;
+  color: lighten($light-text-normal, 30%);
+  transition: color 0.3s;
+}
+.app .heading .icon:hover {
+  cursor: pointer;
+  color: $light-text-normal;
+}
+.app .heading .search-input {
+  display: none;
+  background-color: $light-background-color;
+  margin-left: 1rem;
+  padding: 2px;
+  border: none;
+  border-bottom: solid 2px #c9c9c9;
+  transition: border 0.3s;
+}
+.app .heading .search-input:focus {
+  border-bottom: solid 2px #969696;
+}
+
+// Forms
+// -----
+.app input[type=submit]:hover {
+  cursor: pointer;
+}
+
+.app {
+  .nolink, .nolink:visited, .nolink:active {
+    color: #0275d8;
+    text-decoration: none;
+  }
+  .nolink:hover {
+    text-decoration: underline;
+  }
+}

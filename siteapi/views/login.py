@@ -24,7 +24,7 @@ class LoginView(View):
     def login_via_cookie(self, request: HttpRequest):
         token = request.get_signed_cookie('a.t', salt=COOKIE_SALT, default=None)
         if token is None:
-            JsonResponse(make_error('Could not decode auth cookie!'))
+            return JsonResponse(make_error('Could not decode auth cookie!'))
         email, name, scopes = parse_token(token)
         try:
             writer = Writer.objects.get(email=email, token=token)

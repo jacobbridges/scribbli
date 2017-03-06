@@ -1,7 +1,9 @@
+/// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 
 import { invitationModel } from '../models/invitation';
 import { writerModel } from '../models/writer';
+
 
 const doubletapState = {
   doubletap: '',
@@ -15,10 +17,12 @@ const doubletapState = {
 
 export const RegisterView = {
 
-  oninit: function(vnode: any) {
+  oninit: function(vnode: Mithril.Vnode<any, any>) {
+
     invitationModel.error = null;
     invitationModel.load(decodeURIComponent(vnode.attrs.unik));
     writerModel.error = null;
+
   },
 
   view: function() {

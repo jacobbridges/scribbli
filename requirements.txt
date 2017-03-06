@@ -2,10 +2,14 @@ appdirs==1.4.0
 Django==1.10.5
 geoip2==2.4.2
 maxminddb==1.2.3
+olefile==0.44
 packaging==16.8
 passlib==1.7.1
+Pillow==4.0.0
 psycopg2==2.6.2
 PyJWT==1.4.2
 pyparsing==2.1.10
+python-slugify==1.2.1
 requests==2.13.0
 six==1.10.0
+Unidecode==0.4.20
