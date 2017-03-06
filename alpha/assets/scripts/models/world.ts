@@ -108,7 +108,7 @@ export const worldModel = {
         worldModel.current = successResponse.data;
 
         // Route to the newly created world
-        // worldModel.form = {} as WorldForm;
+        worldModel.form = {} as WorldForm;
         // m.route.set(`/universe/world/${worldModel.current.slug}`);
 
       } else if (apiResponse.id === 'failure') {
