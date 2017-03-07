@@ -6,6 +6,7 @@ import { RegisterView } from './views/register';
 import { homeView } from './views/home';
 import { universeView } from './views/universe';
 import { worldCreateView } from './views/world-create';
+import { worldView } from './views/world';
 
 m.route(document.body, "/login", {
   '/login': LoginView,
@@ -13,4 +14,5 @@ m.route(document.body, "/login", {
   '/home': homeView,
   '/universe': universeView,
   '/universe/new-world': worldCreateView,
+  '/world/:slug': worldView,
 });

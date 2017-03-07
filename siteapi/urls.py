@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from siteapi.views import Signup, AlphaInvitation, Writer, Login, World
+from siteapi.views import Signup, AlphaInvitation, Writer, Login, World, Universe
 
 urlpatterns = [
     url(r'^signup/', Signup.as_view(), name='signup'),
@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^writer/', Writer.as_view()),
     url(r'^login/', Login.as_view()),
     url(r'^world/', World.as_view()),
+    url(r'^universe', Universe.as_view()),
 ]

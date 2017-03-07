@@ -1,7 +1,7 @@
 /// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 const Cookies = require('js-cookie');
-import { get, map } from 'lodash';
+import { get, map, reject } from 'lodash';
 
 import { worldRegexCheck,safeHTML } from '../utils/validation';
 import { WriterModel as wd } from './singletons/writer-data';
@@ -28,6 +28,9 @@ export const worldModel = {
 
   // The current world
   current: {} as SiteApi.Elements.World,
+
+  // Error retrieving the current world
+  retrieve_error: '',
 
   // Form errors
   form_errors: {
@@ -148,6 +151,40 @@ export const worldModel = {
 
     });
 
-  }
+  },
+
+  // Get a world from the siteapi
+  get: ({ pk, name, slug }: { pk?: number, name?: string, slug?: string }) => {
+
+    // Get the CSRF token from the cookie
+    const csrfToken = Cookies.get('csrftoken');
+
+    // Get the world from the siteapi
+    return m.request({
+      method: 'GET',
+      url: '/api/world/',
+      headers: { 'X-CSRFToken': csrfToken },
+      data: JSON.parse(JSON.stringify({ pk, name, slug })),
+    }).then((apiResponse: SiteApi.Response<any>) => {
+
+      if (apiResponse.id === 'success') {
+
+        let successResponse = apiResponse as SiteApi.Response<SiteApi.Elements.World>;
+
+        // Set the current world to the response from the api
+        worldModel.current = successResponse.data;
+
+      } else if (apiResponse.id === 'failure') {
+
+        let failureResponse = apiResponse as SiteApi.ErrorResponse;
+
+        // Set the retrieve error to the response error
+        worldModel.retrieve_error = failureResponse.data.message;
+
+      }
+
+    });
+
+  },
 
 };

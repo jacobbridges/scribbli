@@ -51,8 +51,8 @@ export namespace SiteApi {
       thumbnail_path: string;
       system: number;
       is_public: boolean;
-      date_created: Date;
-      date_modified: Date;
+      date_created: number;
+      date_modified: number;
     }
 
   }

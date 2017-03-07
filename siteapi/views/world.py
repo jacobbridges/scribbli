@@ -4,7 +4,7 @@ from slugify import slugify
 
 from siteapi.auth import authenticate_via_cookie
 from siteapi.utils import make_error, make_thumbnail
-from siteapi.models import UploadedImage
+from siteapi.models import UploadedImage, World
 from siteapi.forms import WorldForm
 
 from django.db.utils import IntegrityError
@@ -14,6 +14,40 @@ from django.views import View
 
 
 class WorldView(View):
+
+    @authenticate_via_cookie
+    def get(self, request: HttpRequest, **kwargs):
+
+        print(request.GET)
+
+        # Check that at least one of the required params is in the request
+        if not any(['pk' in request.GET, 'name' in request.GET, 'slug' in request.GET]):
+            return JsonResponse(make_error('Improper request: expected one of the following query '
+                                           'parameters: "pk", "name", or "slug"'))
+
+        # Try to get the world
+        try:
+            world = World.objects.get(**request.GET.dict())
+        except World.DoesNotExist:
+            return JsonResponse(make_error('This world does not exist.'))
+
+        # Serialize the world and return it
+        return JsonResponse(dict(
+            id='success',
+            data=dict(
+                name=world.name,
+                slug=world.slug,
+                description=world.description,
+                owner=world.owner.name,
+                universe=world.universe_id,
+                background_path=world.background.image.url,
+                thumbnail_path=world.thumbnail.image.url,
+                system=world.system_id,
+                is_public=world.is_public,
+                date_created=world.date_created.timestamp() * 1000.0,
+                date_modified=world.date_modified.timestamp() * 1000.0,
+            )
+        ))
 
     @authenticate_via_cookie
     def post(self, request: HttpRequest, **kwargs):

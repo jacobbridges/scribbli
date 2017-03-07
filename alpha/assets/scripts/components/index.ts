@@ -1,2 +1,3 @@
 export { hero, darkHero } from './hero';
-export { breadcrumb } from './breadcrumb';
+export { breadcrumb, breadcrumbWithoutContainer } from './breadcrumb';
+export { WorldTileData as IWorldTileData, worldTile } from './world-tile';

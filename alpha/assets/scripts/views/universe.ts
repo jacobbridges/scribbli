@@ -1,10 +1,15 @@
 /// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
+const Cookies = require('js-cookie');
 
 import { checkAuth } from '../resolvers/auth-router-resolver';
 import { BreadcrumbModel } from '../models/singletons/breadcrumb';
-import { breadcrumb } from '../components';
+import { breadcrumb, worldTile, IWorldTileData } from '../components';
 
+
+const windowState = {
+  worlds: [] as IWorldTileData[],
+};
 
 export const universeView = checkAuth({
 
@@ -14,6 +19,16 @@ export const universeView = checkAuth({
       { name: 'Home', path: '/home' },
       { name: 'Universe', path: '/universe' },
     ];
+
+    // Get the CSRF token from the cookie
+    const csrfToken = Cookies.get('csrftoken');
+
+    // Create the siteapi request
+    return m.request({
+      method: 'GET',
+      url: '/api/universe/',
+      headers: { 'X-CSRFToken': csrfToken },
+    }).then((response: any) => windowState.worlds = response.data);
 
   },
 
@@ -30,6 +45,10 @@ export const universeView = checkAuth({
             m('input.search-input', { type: 'text' }),
           ]),
         ]),
+      ]),
+      // Worlds
+      m('.container', [
+        m('.row', windowState.worlds.map((world: IWorldTileData) => m(worldTile, { world }))),
       ]),
     ]);
 
