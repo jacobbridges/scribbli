@@ -1,6 +1,8 @@
 /// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
 const Cookies = require('js-cookie');
+const BBCodeParser = require('bbcode-parser');
+const parser = new BBCodeParser(BBCodeParser.defaultTags());
 import { get, map, reject } from 'lodash';
 
 import { worldRegexCheck,safeHTML } from '../utils/validation';
@@ -85,7 +87,7 @@ export const worldModel = {
 
     // Add the form's data to the FormData container
     formData.append('name', worldModel.form.name);
-    formData.append('description', worldModel.form.description);
+    formData.append('description', parser.parseString(worldModel.form.description));
     formData.append('is_public', worldModel.form.is_public);
     formData.append('background', worldModel.form.background);
     formData.append('universe', 1);
@@ -110,7 +112,7 @@ export const worldModel = {
 
         // Route to the newly created world
         worldModel.form = {} as WorldForm;
-        // m.route.set(`/universe/world/${worldModel.current.slug}`);
+        m.route.set(`/world/${worldModel.current.slug}`);
 
       } else if (apiResponse.id === 'failure') {
 

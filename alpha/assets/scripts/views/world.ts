@@ -123,7 +123,15 @@ export const worldView = checkAuth({
       // Overview
       m('.container', { style: { display: tabs.overview ? 'block' : 'none' } }, [
         m('.row', [
-          m('div', 'Overview'),
+          m('.col-md-8', [
+            m('.row', [
+              m('#description', [
+                m('h2', 'Description'),
+                m('hr'),
+                m('div', m.trust(worldModel.current.description)),
+              ]),
+            ]),
+          ]),
         ]),
       ]),
       // Destinations
