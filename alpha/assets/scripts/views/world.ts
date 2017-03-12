@@ -124,11 +124,56 @@ export const worldView = checkAuth({
       m('.container', { style: { display: tabs.overview ? 'block' : 'none' } }, [
         m('.row', [
           m('.col-md-8', [
+            // Description
             m('.row', [
               m('#description', [
                 m('h2', 'Description'),
                 m('hr'),
                 m('div', m.trust(worldModel.current.description)),
+              ]),
+            ]),
+            // Details
+            m('.row', [
+              m('#details', [
+                m('h2', 'Details'),
+                m('hr'),
+                m('.row', [
+                  // Character Count
+                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                    m('.detail-icon', [
+                      m('i.fa.fa-users [aria-hidden="true"]'),
+                    ]),
+                    m('.detail-text', `10 characters`),
+                  ]),
+                  // Story Count
+                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                    m('.detail-icon', [
+                      m('i.fa.fa-book [aria-hidden="true"]'),
+                    ]),
+                    m('.detail-text', `2 stories`),
+                  ]),
+                  // Post Count
+                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                    m('.detail-icon', [
+                      m('i.fa.fa-align-left [aria-hidden="true"]'),
+                    ]),
+                    m('.detail-text', `331 posts`),
+                  ]),
+                  // Destination Count
+                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                    m('.detail-icon', [
+                      m('i.fa.fa-compass [aria-hidden="true"]'),
+                    ]),
+                    m('.detail-text', `3 destinations`),
+                  ]),
+                  // Author Count
+                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                    m('.detail-icon', [
+                      m('i.fa.fa-user-circle-o [aria-hidden="true"]'),
+                    ]),
+                    m('.detail-text', `2 authors`),
+                  ]),
+                ]),
               ]),
             ]),
           ]),
