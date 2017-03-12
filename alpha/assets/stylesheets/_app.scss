@@ -12,6 +12,10 @@
   background-color: $light-background-color;
   letter-spacing: $letter-spacing;
   font-family: $font-family-app;
+
+  // Import page specific styling
+  @import 'pages/world';
+
 }
 
 // Section Headings
