@@ -4,9 +4,7 @@ const m = require('mithril');
 import { checkAuth } from '../resolvers/auth-router-resolver';
 import { BreadcrumbModel } from '../models/singletons/breadcrumb';
 import { worldModel } from '../models/world';
-import { breadcrumbWithoutContainer } from '../components';
-
-
+import { breadcrumbWithoutContainer, previewPost } from '../components';
 
 
 const tabs = {
@@ -174,6 +172,25 @@ export const worldView = checkAuth({
                     m('.detail-text', `2 authors`),
                   ]),
                 ]),
+              ]),
+            ]),
+          ]),
+          m('.col-md-4', [
+            m('#latest-posts', [
+              m('h2', 'Latest Posts'),
+              m('hr'),
+              m('div', [
+                m(previewPost, {
+                  post: {
+                    post_url: '#',
+                    author: 'Blodyborin',
+                    author_url: '#',
+                    destination: 'The Grotto',
+                    destination_url: '#',
+                    time_since: '20 minutes ago',
+                    text: `<p>Herb every sea over multiply, which and behold earth. Grass were fourth their day fruit to moving Evening two. Of earth behold she'd forth man dry seed green us itself their itself fill. Him stars it had signs it lesser one moving creepeth image multiply have earth gathered created hath sea, you'll was place second fish light cattle Had which don't beast moveth so for. Sea after. Fourth made said said replenish a great fish under lesser multiply. Fruitful may, itself us third lesser days our is. It air called and made. Whales beginning one. Face brought dominion be shall.</p>`,
+                  }
+                }),
               ]),
             ]),
           ]),
