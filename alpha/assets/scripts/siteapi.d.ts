@@ -51,6 +51,11 @@ export namespace SiteApi {
       thumbnail_path: string;
       system: number;
       is_public: boolean;
+      num_characters: number;
+      num_posts: number;
+      num_destinations: number;
+      num_stories: number;
+      num_authors: number;
       date_created: number;
       date_modified: number;
     }

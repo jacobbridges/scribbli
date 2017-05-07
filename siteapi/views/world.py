@@ -4,7 +4,7 @@ from slugify import slugify
 
 from siteapi.auth import authenticate_via_cookie
 from siteapi.utils import make_error, make_thumbnail
-from siteapi.models import UploadedImage, World
+from siteapi.models import Character, Destination, Story, StoryPost, UploadedImage, World, Writer
 from siteapi.forms import WorldForm
 
 from django.db.utils import IntegrityError
@@ -18,8 +18,6 @@ class WorldView(View):
     @authenticate_via_cookie
     def get(self, request: HttpRequest, **kwargs):
 
-        print(request.GET)
-
         # Check that at least one of the required params is in the request
         if not any(['pk' in request.GET, 'name' in request.GET, 'slug' in request.GET]):
             return JsonResponse(make_error('Improper request: expected one of the following query '
@@ -30,6 +28,10 @@ class WorldView(View):
             world = World.objects.get(**request.GET.dict())
         except World.DoesNotExist:
             return JsonResponse(make_error('This world does not exist.'))
+
+        # Get the number of authors in this world
+        destinations = Destination.objects.filter(world=world)
+        num_authors = Writer.objects.filter(story_post__chapter__destination__in=destinations).count()
 
         # Serialize the world and return it
         return JsonResponse(dict(
@@ -46,6 +48,11 @@ class WorldView(View):
                 is_public=world.is_public,
                 date_created=world.date_created.timestamp() * 1000.0,
                 date_modified=world.date_modified.timestamp() * 1000.0,
+                num_characters=Character.objects.filter(world=world).count(),
+                num_stories=Story.objects.filter(chapter__destination__world=world).count(),
+                num_posts=StoryPost.objects.filter(chapter__destination__world=world).count(),
+                num_destinations=destinations.count(),
+                num_authors=num_authors,
             )
         ))
 

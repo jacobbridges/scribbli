@@ -137,39 +137,39 @@ export const worldView = checkAuth({
                 m('hr'),
                 m('.row', [
                   // Character Count
-                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                  m('.col-6.col-md-4.col-lg-3', [
                     m('.detail-icon', [
                       m('i.fa.fa-users [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `10 characters`),
+                    m('.detail-text', `${worldModel.current.num_characters} characters`),
                   ]),
                   // Story Count
-                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                  m('.col-6.col-md-4.col-lg-3', [
                     m('.detail-icon', [
                       m('i.fa.fa-book [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `2 stories`),
+                    m('.detail-text', `${worldModel.current.num_stories} stories`),
                   ]),
                   // Post Count
-                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                  m('.col-6.col-md-4.col-lg-3', [
                     m('.detail-icon', [
                       m('i.fa.fa-align-left [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `331 posts`),
+                    m('.detail-text', `${worldModel.current.num_posts} posts`),
                   ]),
                   // Destination Count
-                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                  m('.col-6.col-md-4.col-lg-3', [
                     m('.detail-icon', [
                       m('i.fa.fa-compass [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `3 destinations`),
+                    m('.detail-text', `${worldModel.current.num_destinations} destinations`),
                   ]),
                   // Author Count
-                  m('.col-6.col-md-4.col-lg-3.col-xl-2', [
+                  m('.col-6.col-md-4.col-lg-3', [
                     m('.detail-icon', [
                       m('i.fa.fa-user-circle-o [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `2 authors`),
+                    m('.detail-text', `${worldModel.current.num_authors} authors`),
                   ]),
                 ]),
               ]),
