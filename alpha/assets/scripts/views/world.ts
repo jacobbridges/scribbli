@@ -137,39 +137,39 @@ export const worldView = checkAuth({
                 m('hr'),
                 m('.row', [
                   // Character Count
-                  m('.col-6.col-md-4.col-lg-3', [
+                  m('.col-6.col-md-3.col-lg-2', [
                     m('.detail-icon', [
                       m('i.fa.fa-users [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `${worldModel.current.num_characters} characters`),
+                    m('.detail-text.small', `${worldModel.current.num_characters} characters`),
                   ]),
                   // Story Count
-                  m('.col-6.col-md-4.col-lg-3', [
+                  m('.col-6.col-md-3.col-lg-2', [
                     m('.detail-icon', [
                       m('i.fa.fa-book [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `${worldModel.current.num_stories} stories`),
+                    m('.detail-text.small', `${worldModel.current.num_stories} stories`),
                   ]),
                   // Post Count
-                  m('.col-6.col-md-4.col-lg-3', [
+                  m('.col-6.col-md-3.col-lg-2', [
                     m('.detail-icon', [
                       m('i.fa.fa-align-left [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `${worldModel.current.num_posts} posts`),
+                    m('.detail-text.small', `${worldModel.current.num_posts} posts`),
                   ]),
                   // Destination Count
-                  m('.col-6.col-md-4.col-lg-3', [
+                  m('.col-6.col-md-3.col-lg-2', [
                     m('.detail-icon', [
                       m('i.fa.fa-compass [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `${worldModel.current.num_destinations} destinations`),
+                    m('.detail-text.small', `${worldModel.current.num_destinations} destinations`),
                   ]),
                   // Author Count
-                  m('.col-6.col-md-4.col-lg-3', [
+                  m('.col-6.col-md-3.col-lg-2', [
                     m('.detail-icon', [
                       m('i.fa.fa-user-circle-o [aria-hidden="true"]'),
                     ]),
-                    m('.detail-text', `${worldModel.current.num_authors} authors`),
+                    m('.detail-text.small', `${worldModel.current.num_authors} authors`),
                   ]),
                 ]),
               ]),
@@ -179,19 +179,19 @@ export const worldView = checkAuth({
             m('#latest-posts', [
               m('h2', 'Latest Posts'),
               m('hr'),
-              m('div', [
-                m(previewPost, {
-                  post: {
-                    post_url: '#',
-                    author: 'Blodyborin',
-                    author_url: '#',
-                    destination: 'The Grotto',
-                    destination_url: '#',
-                    time_since: '20 minutes ago',
-                    text: `<p>Herb every sea over multiply, which and behold earth. Grass were fourth their day fruit to moving Evening two. Of earth behold she'd forth man dry seed green us itself their itself fill. Him stars it had signs it lesser one moving creepeth image multiply have earth gathered created hath sea, you'll was place second fish light cattle Had which don't beast moveth so for. Sea after. Fourth made said said replenish a great fish under lesser multiply. Fruitful may, itself us third lesser days our is. It air called and made. Whales beginning one. Face brought dominion be shall.</p>`,
-                  }
-                }),
-              ]),
+              // m('div', [
+              //   m(previewPost, {
+              //     post: {
+              //       post_url: '#',
+              //       author: 'Blodyborin',
+              //       author_url: '#',
+              //       destination: 'The Grotto',
+              //       destination_url: '#',
+              //       time_since: '20 minutes ago',
+              //       text: `<p>Herb every sea over multiply, which and behold earth. Grass were fourth their day fruit to moving Evening two. Of earth behold she'd forth man dry seed green us itself their itself fill. Him stars it had signs it lesser one moving creepeth image multiply have earth gathered created hath sea, you'll was place second fish light cattle Had which don't beast moveth so for. Sea after. Fourth made said said replenish a great fish under lesser multiply. Fruitful may, itself us third lesser days our is. It air called and made. Whales beginning one. Face brought dominion be shall.</p>`,
+              //     }
+              //   }),
+              // ]),
             ]),
           ]),
         ]),

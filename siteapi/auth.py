@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.http.request import HttpRequest
 
-from siteapi.models import Writer
 from scribbli.settings import COOKIE_SALT
+from siteapi.token_backend import TokenBackend
 from siteapi.utils import make_error, parse_token
 
 

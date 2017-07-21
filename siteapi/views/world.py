@@ -1,37 +1,34 @@
-import json
-
 from slugify import slugify
 
-from siteapi.auth import authenticate_via_cookie
 from siteapi.utils import make_error, make_thumbnail
-from siteapi.models import Character, Destination, Story, StoryPost, UploadedImage, World, Writer
+from siteapi.models import Character, Destination, Story, StoryPost, UploadedImage, World
 from siteapi.forms import WorldForm
 
+from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from django.http import JsonResponse
-from django.http.request import HttpRequest
 from django.views import View
 
 
 class WorldView(View):
 
-    @authenticate_via_cookie
-    def get(self, request: HttpRequest, **kwargs):
+    def get(self, request):
 
         # Check that at least one of the required params is in the request
-        if not any(['pk' in request.GET, 'name' in request.GET, 'slug' in request.GET]):
+        if not any(['pk' in request.GET, 'slug' in request.GET]):
             return JsonResponse(make_error('Improper request: expected one of the following query '
-                                           'parameters: "pk", "name", or "slug"'))
+                                           'parameters: "pk" or "slug"'))
 
         # Try to get the world
         try:
             world = World.objects.get(**request.GET.dict())
         except World.DoesNotExist:
-            return JsonResponse(make_error('This world does not exist.'))
+            return JsonResponse(make_error('This world does not exist.'),
+                                status=404)
 
         # Get the number of authors in this world
         destinations = Destination.objects.filter(world=world)
-        num_authors = Writer.objects.filter(story_post__chapter__destination__in=destinations).count()
+        num_authors = User.objects.filter(story_post__chapter__destination__in=destinations).count()
 
         # Serialize the world and return it
         return JsonResponse(dict(
@@ -40,7 +37,7 @@ class WorldView(View):
                 name=world.name,
                 slug=world.slug,
                 description=world.description,
-                owner=world.owner.name,
+                owner=world.owner.username,
                 universe=world.universe_id,
                 background_path=world.background.image.url,
                 thumbnail_path=world.thumbnail.image.url,
@@ -56,11 +53,7 @@ class WorldView(View):
             )
         ))
 
-    @authenticate_via_cookie
-    def post(self, request: HttpRequest, **kwargs):
-
-        # Retrieve the writer from the kwargs (was added in the authenticate_via_cookie decorator)
-        writer = kwargs['writer']
+    def post(self, request):
 
         # Fill a form from the passed in data
         form = WorldForm(request.POST)
@@ -73,17 +66,17 @@ class WorldView(View):
         # If the form is valid, create the world
         world = form.save(commit=False)
         world.slug = slugify(world.name)
-        world.owner = writer
+        world.owner = request.user
 
         try:
             # Save the background image
-            background = UploadedImage(image=request.FILES['background'], owner=writer,
+            background = UploadedImage(image=request.FILES['background'], owner=request.user,
                                        type='background')
             background.save()
 
             # Save a thumbnail of the background
             thumbnail_file = make_thumbnail(background.image.path)
-            thumbnail = UploadedImage(image=thumbnail_file, owner=writer, type='thumbnail')
+            thumbnail = UploadedImage(image=thumbnail_file, owner=request.user, type='thumbnail')
             test = thumbnail.image.url  # If the image was not create, this will cause an error
             thumbnail.save()
 
@@ -117,7 +110,7 @@ class WorldView(View):
                 name=world.name,
                 slug=world.slug,
                 description=world.description,
-                owner=writer.name,
+                owner=request.user.username,
                 universe=world.universe_id,
                 background_path=world.background.image.url,
                 thumbnail_path=world.thumbnail.image.url,

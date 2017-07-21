@@ -1,7 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 from .image import UploadedImage
-from .writer import Writer
 from .universe import Universe
 
 
@@ -9,7 +9,7 @@ class World(models.Model):
     name = models.CharField(max_length=40)
     slug = models.CharField(max_length=40)
     description = models.TextField()
-    owner = models.ForeignKey(Writer, on_delete=models.CASCADE, related_name='worlds',
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='worlds',
                               related_query_name='world', null=True)
     universe = models.ForeignKey(Universe, on_delete=models.CASCADE, related_name='worlds',
                                  related_query_name='world')

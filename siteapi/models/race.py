@@ -1,6 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
 
-from .writer import Writer
 from .world import World
 
 
@@ -8,7 +8,7 @@ class Race(models.Model):
     name = models.CharField(max_length=40)
     slug = models.CharField(max_length=40)
     description = models.TextField()
-    owner = models.ForeignKey(Writer, on_delete=models.CASCADE, related_name='races',
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='races',
                               related_query_name='race')
     world = models.ForeignKey(World, on_delete=models.SET_NULL, related_name='races',
                               related_query_name='race', null=True)

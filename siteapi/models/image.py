@@ -1,8 +1,7 @@
 from uuid import uuid4
 
+from django.contrib.auth.models import User
 from django.db import models
-
-from .writer import Writer
 
 
 def generate_image_path(instance, filename):
@@ -24,7 +23,7 @@ class UploadedImage(models.Model):
     image_width = models.FloatField(null=True, blank=True)
     image_height = models.FloatField(null=True, blank=True)
     type = models.CharField(max_length=40)
-    owner = models.ForeignKey(Writer, on_delete=models.SET_NULL, related_name='uploaded_images',
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='uploaded_images',
                               related_query_name='uploaded_image', null=True)
     date_created = models.DateTimeField('date created', auto_now_add=True)
     date_modified = models.DateTimeField('date modified', auto_now=True)

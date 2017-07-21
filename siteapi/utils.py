@@ -91,3 +91,16 @@ def make_thumbnail(img_path, width=200, height=200):
     in_memory_img = BytesIO()
     image.save(in_memory_img, pillow_ext, quality=90)
     return ImageFile(in_memory_img, name=('thumbnail.' + img_ext))
+
+
+def ensure_request_dict_has_one(d, *items, custom_error=False):
+    """
+    Ensure that a request's dictionary has at least one of the requested items.
+    """
+    if not any([x in d for x in items]):
+        if custom_error:
+            return JsonResponse(make_error(custom_error))
+        else:
+            return JsonResponse(
+                make_error('Improper request: expected one of the following '
+                           'query parameters: ' + ', '.join(items)))

@@ -1,13 +1,13 @@
+from django.contrib.auth.models import User
 from django.db import models
 
-from .writer import Writer
 from .chapter import Chapter
 from .character import Character
 
 
 class StoryPost(models.Model):
     text = models.TextField()
-    owner = models.ForeignKey(Writer, on_delete=models.CASCADE, related_name='story_posts',
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='story_posts',
                               related_query_name='story_post')
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='posts',
                                 related_query_name='post')

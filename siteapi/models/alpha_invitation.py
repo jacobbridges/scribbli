@@ -1,13 +1,13 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 from siteapi.utils import one_day_from_now
-from siteapi.models.writer import Writer
 
 
 class AlphaInvitation(models.Model):
     email = models.CharField(max_length=200)
     unik = models.CharField(max_length=36)
-    inviter = models.ForeignKey(Writer, on_delete=models.SET_NULL, related_name='invites',
+    inviter = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='invites',
                                 related_query_name='invite', null=True)
     accepted = models.BooleanField(default=False)
     sent_invite = models.BooleanField('sent invite', default=False)

@@ -2,13 +2,14 @@ import json
 
 from passlib.hash import pbkdf2_sha256
 
+from django.contrib.auth.models import User
 from django.core.serializers import serialize
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from django.http import JsonResponse
 from django.views import View
 
-from siteapi.models import Writer, AlphaInvitation
+from siteapi.models import AlphaInvitation
 from siteapi.utils import make_error, match_email_rgx, match_writer_rgx
 
 
@@ -26,18 +27,18 @@ class WriterView(View):
             return JsonResponse(make_error('Data failed validation', validation_errors))
         # Check if a writer already exists for this name or email address
         try:
-            writer = Writer.objects.get(name=data['name'])
+            writer = User.objects.get(username=data['name'])
             if writer:
                 return JsonResponse(make_error('That pseudonym is taken.'))
-            writer = Writer.objects.get(email=data['email'])
+            writer = User.objects.get(email=data['email'])
             if writer:
                 return JsonResponse(make_error('This email has already been registered!'))
-        except Writer.DoesNotExist:
+        except User.DoesNotExist:
             pass
-        # Create a password hash
-        phash = pbkdf2_sha256.using(salt_size=8).hash(data['password'])
+
         # Create the writer object
-        writer = Writer(email=data['email'], name=data['name'], phash=phash)
+        writer = User.objects.create_user(data['name'], data['email'], data['password'])
+
         # Before saving the writer to the database, check if the writer was created from
         # an invitation
         unik = data.get('unik', None)

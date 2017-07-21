@@ -58,6 +58,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'siteapi.token_backend.TokenBackend',
+]
+
 ROOT_URLCONF = 'scribbli.urls'
 
 TEMPLATES = [
