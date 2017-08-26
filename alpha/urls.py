@@ -4,5 +4,5 @@ import alpha.views
 
 
 urlpatterns = [
-    url(r'^$', alpha.views.index, name='index'),
+    url(r'^$', alpha.views.index, name='alpha'),
 ]
