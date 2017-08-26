@@ -1,41 +1,39 @@
 /// <reference path="../interfaces/mithril.d.ts" />
 const m = require('mithril');
+const Cookies = require('js-cookie');
 
 import { checkAuth } from '../resolvers/auth-router-resolver';
 import { BreadcrumbModel } from '../models/singletons/breadcrumb';
 import { worldModel } from '../models/world';
-import { breadcrumbWithoutContainer, previewPost } from '../components';
+import { breadcrumbWithoutContainer, previewPost, ILinkableObject,
+         simpleLinkableObjectList } from '../components';
 
+
+const windowState = {
+  destinations: [] as ILinkableObject[],
+  tab: 'overview',
+};
 
 const tabs = {
 
-  overview: true,
-  destinations: false,
-  stories: false,
-  characters: false,
-
   showOverview: function(e: Event) {
     e.preventDefault();
-    tabs.overview = true;
-    tabs.destinations = tabs.stories = tabs.characters = false;
+    windowState.tab = 'overview';
   },
 
   showDestinations: function(e: Event) {
     e.preventDefault();
-    tabs.destinations = true;
-    tabs.overview = tabs.stories = tabs.characters = false;
+    windowState.tab = 'destinations';
   },
 
   showStories: function(e: Event) {
     e.preventDefault();
-    tabs.stories = true;
-    tabs.overview = tabs.destinations = tabs.characters = false;
+    windowState.tab = 'stories';
   },
 
   showCharacters: function(e: Event) {
     e.preventDefault();
-    tabs.characters = true;
-    tabs.overview = tabs.destinations = tabs.stories = false;
+    windowState.tab = 'characters';
   },
 
 };
@@ -79,6 +77,19 @@ export const worldView = checkAuth({
           { name: worldModel.current.name, path: `/world/${worldModel.current.slug}` },
         ];
 
+      })
+      .then(() => {
+
+        // Get the CSRF token from the cookie
+        const csrfToken = Cookies.get('csrftoken');
+
+        // Get the world's destinations
+        return m.request({
+          method: 'GET',
+          url: '/api/destination/list/?world_slug=' + worldModel.current.slug,
+          headers: { 'X-CSRFToken': csrfToken },
+        }).then((response: any) => windowState.destinations = response.data);
+
       });
 
   },
@@ -95,124 +106,130 @@ export const worldView = checkAuth({
           m('li.nav-item', [
             m('a.nav-link [href="#"]', {
               onclick: tabs.showOverview,
-              'class': tabs.overview ? 'active' : '',
+              'class': windowState.tab === 'overview' ? 'active' : '',
             }, 'Overview'),
           ]),
           m('li.nav-item', [
             m('a.nav-link [href="#"]', {
               onclick: tabs.showDestinations,
-              'class': tabs.destinations ? 'active': '',
+              'class': windowState.tab === 'destinations' ? 'active': '',
             }, 'Destinations'),
           ]),
           m('li.nav-item', [
             m('a.nav-link [href="#"]', {
               onclick: tabs.showStories,
-              'class': tabs.stories ? 'active': '',
+              'class': windowState.tab === 'stories' ? 'active': '',
             }, 'Stories'),
           ]),
           m('li.nav-item', [
             m('a.nav-link [href="#"]', {
               onclick: tabs.showCharacters,
-              'class': tabs.characters ? 'active': '',
+              'class': windowState.tab === 'characters' ? 'active': '',
             }, 'Characters'),
           ]),
         ]),
       ]),
       // Overview
-      m('.container', { style: { display: tabs.overview ? 'block' : 'none' } }, [
-        m('.row', [
-          m('.col-md-8', [
-            // Description
-            m('.row', [
-              m('#description', [
-                m('h2', 'Description'),
-                m('hr'),
-                m('div', m.trust(worldModel.current.description)),
-              ]),
-            ]),
-            // Details
-            m('.row', [
-              m('#details', [
-                m('h2', 'Details'),
-                m('hr'),
-                m('.row', [
-                  // Character Count
-                  m('.col-6.col-md-3.col-lg-2', [
-                    m('.detail-icon', [
-                      m('i.fa.fa-users [aria-hidden="true"]'),
+      m('.container', [
+        (() => {
+          switch(windowState.tab) {
+            case 'overview':
+              return m('.row', [
+                m('.col-md-8', [
+                  // Description
+                  m('.row', [
+                    m('#description', [
+                      m('h2', 'Description'),
+                      m('hr'),
+                      m('div', m.trust(worldModel.current.description)),
                     ]),
-                    m('.detail-text.small', `${worldModel.current.num_characters} characters`),
                   ]),
-                  // Story Count
-                  m('.col-6.col-md-3.col-lg-2', [
-                    m('.detail-icon', [
-                      m('i.fa.fa-book [aria-hidden="true"]'),
+                  // Details
+                  m('.row', [
+                    m('#details', [
+                      m('h2', 'Details'),
+                      m('hr'),
+                      m('.row', [
+                        // Character Count
+                        m('.col-6.col-md-3.col-lg-2', [
+                          m('.detail-icon', [
+                            m('i.fa.fa-users [aria-hidden="true"]'),
+                          ]),
+                          m('.detail-text.small', `${worldModel.current.num_characters} characters`),
+                        ]),
+                        // Story Count
+                        m('.col-6.col-md-3.col-lg-2', [
+                          m('.detail-icon', [
+                            m('i.fa.fa-book [aria-hidden="true"]'),
+                          ]),
+                          m('.detail-text.small', `${worldModel.current.num_stories} stories`),
+                        ]),
+                        // Post Count
+                        m('.col-6.col-md-3.col-lg-2', [
+                          m('.detail-icon', [
+                            m('i.fa.fa-align-left [aria-hidden="true"]'),
+                          ]),
+                          m('.detail-text.small', `${worldModel.current.num_posts} posts`),
+                        ]),
+                        // Destination Count
+                        m('.col-6.col-md-3.col-lg-2', [
+                          m('.detail-icon', [
+                            m('i.fa.fa-compass [aria-hidden="true"]'),
+                          ]),
+                          m('.detail-text.small', `${worldModel.current.num_destinations} destinations`),
+                        ]),
+                        // Author Count
+                        m('.col-6.col-md-3.col-lg-2', [
+                          m('.detail-icon', [
+                            m('i.fa.fa-user-circle-o [aria-hidden="true"]'),
+                          ]),
+                          m('.detail-text.small', `${worldModel.current.num_authors} authors`),
+                        ]),
+                      ]),
                     ]),
-                    m('.detail-text.small', `${worldModel.current.num_stories} stories`),
-                  ]),
-                  // Post Count
-                  m('.col-6.col-md-3.col-lg-2', [
-                    m('.detail-icon', [
-                      m('i.fa.fa-align-left [aria-hidden="true"]'),
-                    ]),
-                    m('.detail-text.small', `${worldModel.current.num_posts} posts`),
-                  ]),
-                  // Destination Count
-                  m('.col-6.col-md-3.col-lg-2', [
-                    m('.detail-icon', [
-                      m('i.fa.fa-compass [aria-hidden="true"]'),
-                    ]),
-                    m('.detail-text.small', `${worldModel.current.num_destinations} destinations`),
-                  ]),
-                  // Author Count
-                  m('.col-6.col-md-3.col-lg-2', [
-                    m('.detail-icon', [
-                      m('i.fa.fa-user-circle-o [aria-hidden="true"]'),
-                    ]),
-                    m('.detail-text.small', `${worldModel.current.num_authors} authors`),
                   ]),
                 ]),
-              ]),
-            ]),
-          ]),
-          m('.col-md-4', [
-            m('#latest-posts', [
-              m('h2', 'Latest Posts'),
-              m('hr'),
-              // m('div', [
-              //   m(previewPost, {
-              //     post: {
-              //       post_url: '#',
-              //       author: 'Blodyborin',
-              //       author_url: '#',
-              //       destination: 'The Grotto',
-              //       destination_url: '#',
-              //       time_since: '20 minutes ago',
-              //       text: `<p>Herb every sea over multiply, which and behold earth. Grass were fourth their day fruit to moving Evening two. Of earth behold she'd forth man dry seed green us itself their itself fill. Him stars it had signs it lesser one moving creepeth image multiply have earth gathered created hath sea, you'll was place second fish light cattle Had which don't beast moveth so for. Sea after. Fourth made said said replenish a great fish under lesser multiply. Fruitful may, itself us third lesser days our is. It air called and made. Whales beginning one. Face brought dominion be shall.</p>`,
-              //     }
-              //   }),
-              // ]),
-            ]),
-          ]),
-        ]),
-      ]),
-      // Destinations
-      m('.container', { style: { display: tabs.destinations ? 'block' : 'none' } }, [
-        m('.row', [
-          m('div', 'Destinations'),
-        ]),
-      ]),
-      // Stories
-      m('.container', { style: { display: tabs.stories ? 'block' : 'none' } }, [
-        m('.row', [
-          m('div', 'Stories'),
-        ]),
-      ]),
-      // Characters
-      m('.container', { style: { display: tabs.characters ? 'block' : 'none' } }, [
-        m('.row', [
-          m('div', 'Characters'),
-        ]),
+                m('.col-md-4', [
+                  m('#latest-posts', [
+                    m('h2', 'Latest Posts'),
+                    m('hr'),
+                    // m('div', [
+                    //   m(previewPost, {
+                    //     post: {
+                    //       post_url: '#',
+                    //       author: 'Blodyborin',
+                    //       author_url: '#',
+                    //       destination: 'The Grotto',
+                    //       destination_url: '#',
+                    //       time_since: '20 minutes ago',
+                    //       text: `<p>Herb every sea over multiply, which and behold earth. Grass were fourth their day fruit to moving Evening two. Of earth behold she'd forth man dry seed green us itself their itself fill. Him stars it had signs it lesser one moving creepeth image multiply have earth gathered created hath sea, you'll was place second fish light cattle Had which don't beast moveth so for. Sea after. Fourth made said said replenish a great fish under lesser multiply. Fruitful may, itself us third lesser days our is. It air called and made. Whales beginning one. Face brought dominion be shall.</p>`,
+                    //     }
+                    //   }),
+                    // ]),
+                  ]),
+                ]),
+              ]);
+            case 'destinations':
+              return m('.row', [
+                m('.col-md-12', [
+                  m('h2.heading', [
+                    m('span.lead.icon', m('i.fa.fa-search aria-hidden="true"')),
+                    m('span.lead.icon', { onclick: () => m.route.set('/universe/new-world') }, m('i.fa.fa-plus aria-hidden="true"')),
+                    m('span.heading-text', 'Destinations'),
+                  ]),
+                  m(simpleLinkableObjectList, { objectList: windowState.destinations }),
+                ]),
+              ]);
+            case 'stories':
+              return m('.row', [
+                m('div', 'Stories'),
+              ]);
+            case 'characters':
+              return m('.row', [
+                m('div', 'Characters'),
+              ]);
+          }
+        })(),
       ]),
     ]);
 

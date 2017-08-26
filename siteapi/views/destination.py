@@ -1,28 +1,38 @@
+from pydash import has, get
+
 from django.http.request import HttpRequest
 from django.http.response import JsonResponse
 from django.views.generic.base import View
 
-from siteapi.auth import authenticate_via_cookie
 from siteapi.models import Destination, World
 from siteapi.utils import ensure_request_dict_has_one, make_error
 
 
 class DestinationList(View):
 
-    @authenticate_via_cookie
     def get(self, request: HttpRequest, **kwargs):
 
-        # Check that either the world's pk or slug was passed with the request
-        ensure_request_dict_has_one(request.GET, ('world_pk', 'world_slug'))
+        # Ensure the request has all the necessary data
+        h = ensure_request_dict_has_one(request.GET, 'world_pk', 'world_slug')
+        if h is not None:
+            return h
 
-        # Try to get the world
+        # Get the world object (if it exists)
         try:
-            if 'world_pk' in request.GET:
-                world = World.objects.get(pk=request.GET['world_pk'])
+            if has(request.GET, 'world_pk'):
+                world = World.objects.get(pk=get(request.GET, 'world_pk'))
             else:
-                world = World.objects.get(slug=request.GET['world_slug'])
+                world = World.objects.get(slug=get(request.GET, 'world_slug'))
         except World.DoesNotExist:
             return JsonResponse(make_error('This world does not exist.'),
                                 status=404)
 
-        # Get destinations by the current writer's permissions
+        # Get destinations for the current world
+        # TODO: Filter destinations on writer's permissions
+        destinations = Destination.objects.filter(world=world)
+
+        # Serialize the destinations and return them
+        return JsonResponse(dict(
+            id='success',
+            data=[d.to_dict() for d in destinations],
+        ))
