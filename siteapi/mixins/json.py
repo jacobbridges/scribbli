@@ -1,3 +1,7 @@
+from django.http.response import HttpResponseNotAllowed, HttpResponseNotFound, Http404
+from django.utils.text import slugify
+from rules.contrib.views import PermissionRequiredMixin
+
 from django.http import JsonResponse
 from django.db.models.base import ModelBase
 from django.db.models.query import QuerySet
@@ -24,15 +28,28 @@ def model_to_dict(instance):
     return data
 
 
+class ShortCircuitHttpChain(Exception):
+    def __init__(self, *args, **kwargs):
+        self.response = kwargs.get('response', None)
+        super(ShortCircuitHttpChain, self).__init__(*args)
+
+
 class JSONResponseMixin(object):
     """
     A mixin that can be used to render a JSON response.
     """
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super(JSONResponseMixin, self).dispatch(request, *args, **kwargs)
+        except ShortCircuitHttpChain as short_circuit:
+            return short_circuit.response
+
     def render_to_json_response(self, context, **response_kwargs):
         """
         Returns a JSON response, transforming 'context' to make the payload.
         """
-        response_kwargs.update(dict(ensure_ascii=False))
+        response_kwargs.update(dict(json_dumps_params=dict(ensure_ascii=False)))
         return JsonResponse(self.safe_json(context), **response_kwargs)
 
     def safe_json(self, context):
@@ -47,9 +64,15 @@ class JSONResponseMixin(object):
                 else:
                     serialize_context[key] = model_to_dict(obj)
             elif isinstance(obj, QuerySet):
-                serialize_context[key] = obj.values()
-            else:
+                serialize_context[key] = [o.serialize() for o in obj if hasattr(o, 'serialize')]
+                if len(serialize_context[key]) != len(obj):
+                    serialize_context[key] = [model_to_dict(o) for o in obj]
+            elif key == 'extra':
                 serialize_context[key] = obj
+            # elif key == 'view':
+            #     continue
+            # else:
+            #     serialize_context[key] = obj
         return dict(success=True, data=serialize_context)
 
     def make_error(self, error, status_code=400, **extra):
@@ -57,22 +80,99 @@ class JSONResponseMixin(object):
         Return the error as a JSON response.
         """
         data = dict(success=False, data=dict(message=error, **extra))
-        return self.render_to_json_response(data, status_code=status_code)
+        raise ShortCircuitHttpChain(response=JsonResponse(data, status=status_code))
 
 
-class JSONCreateView(JSONResponseMixin, BaseCreateView):
+class JSONResponseSingleObjectMixin(JSONResponseMixin):
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super(JSONResponseSingleObjectMixin, self).dispatch(request, *args, **kwargs)
+        except Http404 as response:
+            return self.make_error(response.__str__(), status_code=404)
+
+
+class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
+    sluggable = False
+
+    def render_to_response(self, context, **response_kwargs):
+        return self.render_to_json_response(context, **response_kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed('POST')
+
+    def get_form_kwargs(self):
+        if not all(x in self.request.POST for x in self.fields):
+            return self.make_error('All fields are required.', required_fields=self.fields)
+        return super(JSONCreateView, self).get_form_kwargs()
+
+    def form_valid(self, form):
+        response = super(JSONCreateView, self).form_valid(form)
+        if self.sluggable:
+            setattr(
+                self.object,
+                'slug',
+                slugify(getattr(
+                    self.object,
+                    self.model.sluggable_field), allow_unicode=True))
+            self.object.save()
+        if hasattr(self, 'context_object_name'):
+            data = dict()
+            data[self.context_object_name] = self.object
+        else:
+            data = dict(object=self.object)
+        return self.render_to_json_response(data)
+
+    def form_invalid(self, form):
+        response = super(JSONCreateView, self).form_invalid(form)
+        return self.make_error('Data failed validation.', **form.errors)
+
+    def get_success_url(self):
+        return ''
+
+
+class JSONDetailView(JSONResponseSingleObjectMixin, BaseDetailView):
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(context, **response_kwargs)
 
 
-class JSONDetailView(JSONResponseMixin, BaseDetailView):
+class JSONUpdateView(JSONResponseSingleObjectMixin, BaseUpdateView):
+    sluggable = False
+
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(context, **response_kwargs)
 
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed('POST')
 
-class JSONUpdateView(JSONResponseMixin, BaseUpdateView):
-    def render_to_response(self, context, **response_kwargs):
-        return self.render_to_json_response(context, **response_kwargs)
+    def get_form_kwargs(self):
+        if not all(x in self.request.POST for x in self.fields):
+            return self.make_error('All fields are required.', required_fields=self.fields)
+        return super(JSONUpdateView, self).get_form_kwargs()
+
+    def form_valid(self, form):
+        response = super(JSONUpdateView, self).form_valid(form)
+        if self.sluggable:
+            setattr(
+                self.object,
+                'slug',
+                slugify(getattr(
+                    self.object,
+                    self.model.sluggable_field), allow_unicode=True))
+            self.object.save()
+        if hasattr(self, 'context_object_name'):
+            data = dict()
+            data[self.context_object_name] = self.object
+        else:
+            data = dict(object=self.object)
+        return self.render_to_json_response(data)
+
+    def form_invalid(self, form):
+        response = super(JSONUpdateView, self).form_invalid(form)
+        return self.make_error('Data failed validation.', **form.errors)
+
+    def get_success_url(self):
+        return ''
 
 
 class JSONListView(JSONResponseMixin, BaseListView):
@@ -80,6 +180,11 @@ class JSONListView(JSONResponseMixin, BaseListView):
         return self.render_to_json_response(context, **response_kwargs)
 
 
-class JSONDeleteView(JSONResponseMixin, BaseDeleteView):
+class JSONDeleteView(JSONResponseSingleObjectMixin, BaseDeleteView):
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(context, **response_kwargs)
+
+
+class PermissionRequiredJSONMixin(JSONResponseMixin, PermissionRequiredMixin):
+    def handle_no_permission(self):
+        return self.make_error('Permission denied.', status_code=403)

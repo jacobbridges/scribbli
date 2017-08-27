@@ -9,7 +9,11 @@ from django.views import View
 from scribbli.settings import COOKIE_SALT
 from siteapi.utils import make_error, match_email_rgx, make_token, parse_token, one_day_from_now
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
+
+@method_decorator(csrf_exempt, 'dispatch')
 class LoginView(View):
 
     required_keys = ['email', 'password']

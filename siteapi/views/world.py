@@ -120,3 +120,30 @@ class WorldView(View):
                 date_modified=world.date_modified.timestamp() * 1000.0,
             )
         ))
+
+
+class WorldListView(View):
+
+    def get(self, request):
+
+        # Get all worlds that this writer is allowed to see
+        worlds = World.objects.filter(Q(is_public__exact=False) | Q(owner_id=request.user.id))
+
+        # Build the response data object
+        worlds_res = []
+        for world in worlds:
+            worlds_res.append(dict(
+                pk=world.pk,
+                name=world.name,
+                slug=world.slug,
+                is_public=world.is_public,
+                thumbnail=world.thumbnail.image.url,
+                character_count=0,
+                story_count=0,
+                last_active=arrow.Arrow.fromdatetime(world.date_modified).humanize(),
+            ))
+
+        return JsonResponse(dict(
+            id='success',
+            data=worlds_res,
+        ))

@@ -37,15 +37,17 @@ ALLOWED_HOSTS = ['192.168.99.100', 'scribb.li', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    "lander.apps.LanderConfig",
-    "alpha.apps.AlphaConfig",
-    "siteapi.apps.SiteapiConfig",
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rules.apps.AutodiscoverRulesConfig',
+
+    'lander.apps.LanderConfig',
+    'alpha.apps.AlphaConfig',
+    'siteapi.apps.SiteapiConfig',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +61,7 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = [
+    'rules.permissions.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
     'siteapi.token_backend.TokenBackend',
 ]

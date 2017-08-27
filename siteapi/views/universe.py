@@ -1,34 +1,36 @@
-import arrow
-
-from siteapi.models import World
-
-from django.http import JsonResponse
-from django.db.models import Q
-from django.views import View
+from siteapi.models import Universe
+from siteapi.mixins.json import JSONCreateView, JSONUpdateView, JSONDetailView, JSONListView, \
+    JSONDeleteView, PermissionRequiredJSONMixin
 
 
-class UniverseView(View):
+class UniverseDetail(PermissionRequiredJSONMixin, JSONDetailView):
+    model = Universe
+    context_object_name = 'universe'
+    permission_required = 'siteapi.universe_detail'
 
-    def get(self, request):
 
-        # Get all worlds that this writer is allowed to see
-        worlds = World.objects.filter(Q(is_public__exact=False) | Q(owner_id=request.user.id))
+class UniverseList(PermissionRequiredJSONMixin, JSONListView):
+    model = Universe
+    context_object_name = 'universes'
+    permission_required = 'siteapi.universe_list'
+    paginate_by = 10
 
-        # Build the response data object
-        worlds_res = []
-        for world in worlds:
-            worlds_res.append(dict(
-                pk=world.pk,
-                name=world.name,
-                slug=world.slug,
-                is_public=world.is_public,
-                thumbnail=world.thumbnail.image.url,
-                character_count=0,
-                story_count=0,
-                last_active=arrow.Arrow.fromdatetime(world.date_modified).humanize(),
-            ))
 
-        return JsonResponse(dict(
-            id='success',
-            data=worlds_res,
-        ))
+class UniverseCreate(PermissionRequiredJSONMixin, JSONCreateView):
+    model = Universe
+    context_object_name = 'universe'
+    permission_required = 'siteapi.universe_create'
+    fields = Universe.editable_fields
+    sluggable = True
+
+
+class UniverseUpdate(PermissionRequiredJSONMixin, JSONUpdateView):
+    model = Universe
+    context_object_name = 'universe'
+    permission_required = 'siteapi.universe_update'
+    fields = Universe.editable_fields
+    sluggable = True
+
+
+class UniverseDelete(PermissionRequiredJSONMixin, JSONDeleteView):
+    model = Universe
