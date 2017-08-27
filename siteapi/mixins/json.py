@@ -75,12 +75,15 @@ class JSONResponseMixin(object):
             #     serialize_context[key] = obj
         return dict(success=True, data=serialize_context)
 
-    def make_error(self, error, status_code=400, **extra):
+    def make_error(self, error, status_code=400, raise_=True, **extra):
         """
         Return the error as a JSON response.
         """
         data = dict(success=False, data=dict(message=error, **extra))
-        raise ShortCircuitHttpChain(response=JsonResponse(data, status=status_code))
+        if raise_:
+            raise ShortCircuitHttpChain(response=JsonResponse(data, status=status_code))
+        else:
+            return JsonResponse(data, status=status_code)
 
 
 class JSONResponseSingleObjectMixin(JSONResponseMixin):
@@ -89,7 +92,7 @@ class JSONResponseSingleObjectMixin(JSONResponseMixin):
         try:
             return super(JSONResponseSingleObjectMixin, self).dispatch(request, *args, **kwargs)
         except Http404 as response:
-            return self.make_error(response.__str__(), status_code=404)
+            return self.make_error(response.__str__(), status_code=404, raise_=False)
 
 
 class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
@@ -183,6 +186,12 @@ class JSONListView(JSONResponseMixin, BaseListView):
 class JSONDeleteView(JSONResponseSingleObjectMixin, BaseDeleteView):
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(context, **response_kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed('DELETE')
+
+    def get_success_url(self):
+        return ''
 
 
 class PermissionRequiredJSONMixin(JSONResponseMixin, PermissionRequiredMixin):

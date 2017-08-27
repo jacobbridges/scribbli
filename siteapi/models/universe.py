@@ -14,6 +14,7 @@ class Universe(DateCreatedMixin, DateModifiedMixin):
     def serialize(self):
         data = super(Universe, self).serialize()
         data.update(dict(
+            pk=self.pk,
             name=self.name,
             slug=self.slug,
             is_public=self.is_public,
