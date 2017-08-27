@@ -194,6 +194,6 @@ class JSONDeleteView(JSONResponseSingleObjectMixin, BaseDeleteView):
         return ''
 
 
-class PermissionRequiredJSONMixin(JSONResponseMixin, PermissionRequiredMixin):
+class PermissionRequiredJSONMixin(PermissionRequiredMixin):
     def handle_no_permission(self):
-        return self.make_error('Permission denied.', status_code=403)
+        return self.make_error('Permission denied.', status_code=403, raise_=False)

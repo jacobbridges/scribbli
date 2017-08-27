@@ -24,3 +24,6 @@ rules.add_perm('siteapi.universe_update', is_admin_or_mod)
 rules.add_perm('siteapi.universe_detail', ((is_universe_public & is_authenticated) | is_admin_or_mod))
 rules.add_perm('siteapi.universe_list', is_admin_or_mod)
 rules.add_perm('siteapi.universe_delete', is_admin)
+
+# World permissions
+rules.add_perm('siteapi.world_create', is_admin)
