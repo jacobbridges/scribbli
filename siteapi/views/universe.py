@@ -6,13 +6,13 @@ from siteapi.mixins.json import JSONCreateView, JSONUpdateView, JSONDetailView, 
 class UniverseDetail(PermissionRequiredJSONMixin, JSONDetailView):
     model = Universe
     context_object_name = 'universe'
-    permission_required = ['siteapi.universe_detail']
+    permission_required = 'siteapi.universe_detail'
 
 
 class UniverseList(PermissionRequiredJSONMixin, JSONListView):
     model = Universe
     context_object_name = 'universes'
-    permission_required = ['siteapi.universe_list']
+    permission_required = 'siteapi.universe_list'
     paginate_by = 10
 
 

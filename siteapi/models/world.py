@@ -1,27 +1,41 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.urls.base import reverse
 
-from .image import UploadedImage
-from .universe import Universe
+from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, OwnerMixin
+from .image import BackgroundMixin, AvatarMixin
+from .universe import UniverseMixin
 
 
-class World(models.Model):
+class World(DateCreatedMixin, DateModifiedMixin, AvatarMixin, BackgroundMixin, OwnerMixin,
+            UniverseMixin):
     name = models.CharField(max_length=40)
     slug = models.CharField(max_length=40)
     description = models.TextField()
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='worlds',
-                              related_query_name='world', null=True)
-    universe = models.ForeignKey(Universe, on_delete=models.CASCADE, related_name='worlds',
-                                 related_query_name='world')
-    background = models.OneToOneField(UploadedImage, on_delete=models.CASCADE,
-                                      related_name='background')
-    thumbnail = models.OneToOneField(UploadedImage, on_delete=models.CASCADE,
-                                     related_name='thumbnail')
-    system = models.ForeignKey('World', on_delete=models.CASCADE, related_name='children',
+    parent = models.ForeignKey('World', on_delete=models.CASCADE, related_name='children',
                                related_query_name='child', blank=True, null=True)
     is_public = models.BooleanField()
-    date_created = models.DateTimeField('date created', auto_now_add=True)
-    date_modified = models.DateTimeField('date modified', auto_now=True)
+
+    sluggable_field = 'name'
+    editable_fields = ['name', 'description', 'parent', 'is_public', 'universe', 'background',
+                       'avatar']
 
     class Meta:
-        unique_together = (('name', 'universe'), ('slug', 'universe'))
+        unique_together = ('name', 'universe')
+
+    def get_absolute_url(self):
+        return reverse('world_detail', kwargs={'pk': self.pk})
+
+    def serialize(self):
+        data = super(World, self).serialize()
+        data.update({
+            'pk': self.pk,
+            'name': self.name,
+            'slug': self.slug,
+            'description': self.description,
+            'parent': self.parent.name if self.parent is not None else None,
+            'parent_pk': self.parent.pk if self.parent is not None else None,
+            'parent_url': self.parent.get_absolute_url() if self.parent is not None else None,
+            'children_pks': list(self.children.all().values_list('pk', flat=True)),
+            'is_public': self.is_public,
+        })
+        return data

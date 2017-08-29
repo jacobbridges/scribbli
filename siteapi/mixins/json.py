@@ -6,9 +6,11 @@ from django.http import JsonResponse
 from django.db.models.base import ModelBase
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ManyToManyField
-from django.views.generic.detail import BaseDetailView
+from django.views.generic.detail import BaseDetailView, SingleObjectMixin
 from django.views.generic.edit import BaseCreateView, BaseUpdateView, BaseDeleteView
 from django.views.generic.list import BaseListView
+
+from siteapi.middleware import ShortCircuitHttpChain
 
 
 def model_to_dict(instance):
@@ -28,22 +30,10 @@ def model_to_dict(instance):
     return data
 
 
-class ShortCircuitHttpChain(Exception):
-    def __init__(self, *args, **kwargs):
-        self.response = kwargs.get('response', None)
-        super(ShortCircuitHttpChain, self).__init__(*args)
-
-
 class JSONResponseMixin(object):
     """
     A mixin that can be used to render a JSON response.
     """
-
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            return super(JSONResponseMixin, self).dispatch(request, *args, **kwargs)
-        except ShortCircuitHttpChain as short_circuit:
-            return short_circuit.response
 
     def render_to_json_response(self, context, **response_kwargs):
         """
@@ -75,28 +65,26 @@ class JSONResponseMixin(object):
             #     serialize_context[key] = obj
         return dict(success=True, data=serialize_context)
 
-    def make_error(self, error, status_code=400, raise_=True, **extra):
+    def throw_error(self, error, status_code=400, **extra):
         """
         Return the error as a JSON response.
         """
         data = dict(success=False, data=dict(message=error, **extra))
-        if raise_:
-            raise ShortCircuitHttpChain(response=JsonResponse(data, status=status_code))
-        else:
-            return JsonResponse(data, status=status_code)
+        raise ShortCircuitHttpChain(response=JsonResponse(data, status=status_code))
 
 
-class JSONResponseSingleObjectMixin(JSONResponseMixin):
+class JSONResponseSingleObjectMixin(JSONResponseMixin, SingleObjectMixin):
 
-    def dispatch(self, request, *args, **kwargs):
+    def get_object(self, *args, **kwargs):
         try:
-            return super(JSONResponseSingleObjectMixin, self).dispatch(request, *args, **kwargs)
+            return super(JSONResponseSingleObjectMixin, self).get_object(*args, **kwargs)
         except Http404 as response:
-            return self.make_error(response.__str__(), status_code=404, raise_=False)
+            return self.throw_error(response.__str__(), status_code=404)
 
 
 class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
     sluggable = False
+    ownable = False
 
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(context, **response_kwargs)
@@ -105,12 +93,7 @@ class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
         return HttpResponseNotAllowed('POST')
 
     def get_form_kwargs(self):
-        if not all(x in self.request.POST for x in self.fields):
-            return self.make_error('All fields are required.', required_fields=self.fields)
-        return super(JSONCreateView, self).get_form_kwargs()
-
-    def form_valid(self, form):
-        response = super(JSONCreateView, self).form_valid(form)
+        self.object = self.model()
         if self.sluggable:
             setattr(
                 self.object,
@@ -118,7 +101,14 @@ class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
                 slugify(getattr(
                     self.object,
                     self.model.sluggable_field), allow_unicode=True))
-            self.object.save()
+        if self.ownable:
+            setattr(self.object, 'owner', self.request.user)
+        if not all((x in self.request.POST or x in self.request.FILES) for x in self.fields):
+            return self.throw_error('All fields are required.', required_fields=self.fields)
+        return super(JSONCreateView, self).get_form_kwargs()
+
+    def form_valid(self, form):
+        response = super(JSONCreateView, self).form_valid(form)
         if hasattr(self, 'context_object_name'):
             data = dict()
             data[self.context_object_name] = self.object
@@ -128,7 +118,7 @@ class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
 
     def form_invalid(self, form):
         response = super(JSONCreateView, self).form_invalid(form)
-        return self.make_error('Data failed validation.', **form.errors)
+        return self.throw_error('Data failed validation.', **form.errors)
 
     def get_success_url(self):
         return ''
@@ -141,6 +131,7 @@ class JSONDetailView(JSONResponseSingleObjectMixin, BaseDetailView):
 
 class JSONUpdateView(JSONResponseSingleObjectMixin, BaseUpdateView):
     sluggable = False
+    ownable = False
 
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(context, **response_kwargs)
@@ -150,7 +141,7 @@ class JSONUpdateView(JSONResponseSingleObjectMixin, BaseUpdateView):
 
     def get_form_kwargs(self):
         if not all(x in self.request.POST for x in self.fields):
-            return self.make_error('All fields are required.', required_fields=self.fields)
+            return self.throw_error('All fields are required.', required_fields=self.fields)
         return super(JSONUpdateView, self).get_form_kwargs()
 
     def form_valid(self, form):
@@ -163,6 +154,9 @@ class JSONUpdateView(JSONResponseSingleObjectMixin, BaseUpdateView):
                     self.object,
                     self.model.sluggable_field), allow_unicode=True))
             self.object.save()
+        if self.ownable:
+            setattr(self.object, 'owner', self.request.user)
+            self.object.save()
         if hasattr(self, 'context_object_name'):
             data = dict()
             data[self.context_object_name] = self.object
@@ -172,7 +166,7 @@ class JSONUpdateView(JSONResponseSingleObjectMixin, BaseUpdateView):
 
     def form_invalid(self, form):
         response = super(JSONUpdateView, self).form_invalid(form)
-        return self.make_error('Data failed validation.', **form.errors)
+        return self.throw_error('Data failed validation.', **form.errors)
 
     def get_success_url(self):
         return ''
@@ -196,4 +190,4 @@ class JSONDeleteView(JSONResponseSingleObjectMixin, BaseDeleteView):
 
 class PermissionRequiredJSONMixin(PermissionRequiredMixin):
     def handle_no_permission(self):
-        return self.make_error('Permission denied.', status_code=403, raise_=False)
+        return self.throw_error('Permission denied.', status_code=403)

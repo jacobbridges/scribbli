@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'siteapi.middleware.ShortCircuitMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -150,6 +151,8 @@ GEOIP_PATH = os.path.join(BASE_DIR, "geo-data")
 
 # CSRF enabled on insecure (http://) and secure (https://) protocols
 CSRF_COOKIE_SECURE = False
+from scribbli.views import csrf_request
+CSRF_FAILURE_VIEW = csrf_request
 
 # Path to store uploaded files
 MEDIA_URL = '/media/'
