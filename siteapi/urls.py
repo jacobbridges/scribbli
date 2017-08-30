@@ -1,11 +1,13 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
-from siteapi.views import Signup, AlphaInvitation, Writer, Login, DestinationList
+from siteapi.views import Signup, AlphaInvitation, Writer, Login
 from siteapi.views.universe import UniverseDetail, UniverseList, UniverseCreate, UniverseUpdate, \
     UniverseDelete
 from siteapi.views.world import WorldDetail, WorldList, WorldCreate, WorldUpdate, WorldDelete
 from siteapi.views.image import ImageDetail, ImageList, ImageCreate, ImageUpdate, ImageDelete
+from siteapi.views.destination import DestinationDetail, DestinationList, DestinationCreate, DestinationUpdate, \
+    DestinationDelete
 
 urlpatterns = [
     url(r'^signup/', Signup.as_view(), name='signup'),
@@ -41,6 +43,11 @@ urlpatterns = [
     url(r'^world/(?P<pk>\d+)/update/$', WorldUpdate.as_view(), name='world_update'),
     url(r'^world/(?P<pk>\d+)/delete/$', WorldDelete.as_view(), name='world_delete'),
 
-    # Destination URLs
-    url(r'^destination/list/', DestinationList.as_view()),
+    # Destination
+    url(r'^world/(?P<world_pk>\d+)/destinations/$', DestinationList.as_view(), name='world_destination_list'),
+    url(r'^destinations/', DestinationList.as_view(), name='destination_list'),
+    url(r'^destination/(?P<pk>\d+)/$', DestinationDetail.as_view(), name='destination_detail'),
+    url(r'^destination/create/$', DestinationCreate.as_view(), name='destination_create'),
+    url(r'^destination/(?P<pk>\d+)/update/$', DestinationUpdate.as_view(), name='destination_update'),
+    url(r'^destination/(?P<pk>\d+)/delete/$', DestinationDelete.as_view(), name='destination_delete'),
 ]

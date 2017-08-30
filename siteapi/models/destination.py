@@ -1,46 +1,57 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.urls.base import reverse
 
-from .image import UploadedImage
-from .world import World
+from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, OwnerMixin, Serializable
+from .image import BackgroundMixin, AvatarMixin
+from .world import WorldMixin
 
 
-class Destination(models.Model):
+class Destination(models.Model, BackgroundMixin, AvatarMixin, WorldMixin, DateCreatedMixin,
+                  DateModifiedMixin, OwnerMixin):
     name = models.CharField(max_length=40)
     slug = models.CharField(max_length=40)
     description = models.TextField()
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='destinations',
-                              related_query_name='destination')
-    world = models.ForeignKey(World, on_delete=models.CASCADE, related_name='destinations',
-                              related_query_name='destination')
-    background = models.OneToOneField(UploadedImage, on_delete=models.CASCADE, related_name='+')
-    thumbnail = models.OneToOneField(UploadedImage, on_delete=models.CASCADE, related_name='+')
-    region = models.ForeignKey('Destination', on_delete=models.CASCADE, related_name='destinations',
-                               related_query_name='destination', null=True)
-    is_region = models.BooleanField()
+    parent = models.ForeignKey('Destination', on_delete=models.CASCADE, related_name='children',
+                               related_query_name='child', null=True)
     is_public = models.BooleanField()
-    date_created = models.DateTimeField('date created', auto_now_add=True)
-    date_modified = models.DateTimeField('date modified', auto_now=True)
+
+    sluggable_field = 'name'
+    editable_fields = ['name', 'description', 'parent', 'is_public', 'background', 'avatar',
+                       'world']
 
     class Meta:
-        unique_together = ('name', 'world', 'slug')
+        unique_together = ('name', 'world')
 
     def get_absolute_url(self):
-        return f'/destination/?pk={self.id}'
+        return reverse('destination_detail', kwargs={'pk': self.pk})
 
-    def to_dict(self):
-        """Transform a Destination instance into a JSON safe dictionary."""
-        return dict(
-            name=self.name,
-            slug=self.slug,
-            description=self.description,
-            owner=self.owner.username,
-            background_path=self.background.image.url,
-            thumbnail_path=self.thumbnail.image.url,
-            region=None if not self.region else self.region.id,
-            is_region=self.is_region,
-            is_public=self.is_public,
-            date_created=self.date_created.timestamp() * 1000.0,
-            date_modified=self.date_modified.timestamp() * 1000.0,
-            url=self.get_absolute_url(),
-        )
+    def serialize(self):
+        data = super(Destination, self).serialize()
+        data.update({
+            'name': self.name,
+            'slug': self.slug,
+            'description': self.description,
+            'parent': self.parent.name if self.parent is not None else None,
+            'parent_pk': self.parent.pk if self.parent is not None else None,
+            'parent_url': self.parent.get_absolute_url() if self.parent is not None else None,
+            'children_pks': list(self.children.all().values_list('pk', flat=True)),
+            'is_public': self.is_public,
+        })
+        return data
+
+
+class DestinationMixin(models.Model, Serializable):
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE,
+                                    related_name='%(class)ss')
+
+    class Meta:
+        abstract = True
+
+    def serialize(self):
+        data = super(DestinationMixin, self).serialize()
+        data.update({
+            'destination': self.destination.name,
+            'destination_pk': self.destination.pk,
+            'destination_url': self.destination.get_absolute_url(),
+        })
+        return data

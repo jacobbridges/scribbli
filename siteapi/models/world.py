@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls.base import reverse
 
-from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, OwnerMixin
+from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, OwnerMixin, Serializable
 from .image import BackgroundMixin, AvatarMixin
 from .universe import UniverseMixin
 
@@ -37,5 +37,21 @@ class World(DateCreatedMixin, DateModifiedMixin, AvatarMixin, BackgroundMixin, O
             'parent_url': self.parent.get_absolute_url() if self.parent is not None else None,
             'children_pks': list(self.children.all().values_list('pk', flat=True)),
             'is_public': self.is_public,
+        })
+        return data
+
+
+class WorldMixin(models.Model, Serializable):
+    world = models.ForeignKey(World, on_delete=models.CASCADE, related_name='%(class)ss')
+
+    class Meta:
+        abstract = True
+
+    def serialize(self):
+        data = super(WorldMixin, self).serialize()
+        data.update({
+            'world': self.world.name,
+            'world_pk': self.world.pk,
+            'world_url': self.world.get_absolute_url(),
         })
         return data

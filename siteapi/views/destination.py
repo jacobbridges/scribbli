@@ -1,38 +1,39 @@
-from pydash import has, get
-
-from django.http.request import HttpRequest
-from django.http.response import JsonResponse
-from django.views.generic.base import View
-
-from siteapi.models import Destination, World
-from siteapi.utils import ensure_request_dict_has_one, make_error
+from siteapi.models import Destination
+from siteapi.mixins.json import JSONDetailView, JSONListView, JSONCreateView, JSONUpdateView, \
+    JSONDeleteView, PermissionRequiredJSONMixin
 
 
-class DestinationList(View):
+class DestinationDetail(PermissionRequiredJSONMixin, JSONDetailView):
+    model = Destination
+    context_object_name = 'destination'
+    permission_required = 'siteapi.destination_detail'
 
-    def get(self, request: HttpRequest, **kwargs):
 
-        # Ensure the request has all the necessary data
-        h = ensure_request_dict_has_one(request.GET, 'world_pk', 'world_slug')
-        if h is not None:
-            return h
+class DestinationList(PermissionRequiredJSONMixin, JSONListView):
+    model = Destination
+    context_object_name = 'destinations'
+    permission_required = 'siteapi.destination_list'
+    paginate_by = 10
 
-        # Get the world object (if it exists)
-        try:
-            if has(request.GET, 'world_pk'):
-                world = World.objects.get(pk=get(request.GET, 'world_pk'))
-            else:
-                world = World.objects.get(slug=get(request.GET, 'world_slug'))
-        except World.DoesNotExist:
-            return JsonResponse(make_error('This world does not exist.'),
-                                status=404)
 
-        # Get destinations for the current world
-        # TODO: Filter destinations on writer's permissions
-        destinations = Destination.objects.filter(world=world)
+class DestinationCreate(PermissionRequiredJSONMixin, JSONCreateView):
+    model = Destination
+    context_object_name = 'destination'
+    permission_required = 'siteapi.destination_create'
+    fields = Destination.editable_fields
+    sluggable = True
+    ownable = True
 
-        # Serialize the destinations and return them
-        return JsonResponse(dict(
-            id='success',
-            data=[d.to_dict() for d in destinations],
-        ))
+
+class DestinationUpdate(PermissionRequiredJSONMixin, JSONUpdateView):
+    model = Destination
+    context_object_name = 'destination'
+    permission_required = 'siteapi.destination_update'
+    fields = Destination.editable_fields
+    sluggable = True
+    ownable = True
+
+
+class DestinationDelete(PermissionRequiredJSONMixin, JSONDeleteView):
+    model = Destination
+    permission_required = 'siteapi.destination_delete'
