@@ -14,3 +14,7 @@ class Race(WorldMixin, DateCreatedMixin, DateModifiedMixin, OwnerMixin):
 
     class Meta:
         unique_together = ('name', 'world')
+
+    @property
+    def _parent(self):
+        return self.world

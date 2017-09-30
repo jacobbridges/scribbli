@@ -172,6 +172,7 @@ class JSONUpdateView(JSONResponseSingleObjectMixin, BaseUpdateView):
 
 class JSONListView(JSONResponseMixin, BaseListView):
     def render_to_response(self, context, **response_kwargs):
+        del context['object_list']
         return self.render_to_json_response(context, **response_kwargs)
 
 

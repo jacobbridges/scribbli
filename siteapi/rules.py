@@ -25,7 +25,7 @@ def is_parent_public(user, object):
 
 
 @predicate
-def has_parent_permissions(user, object):
+def is_parent_owner(user, object):
     return object._parent.owner.pk is user.pk
 
 
@@ -55,7 +55,14 @@ rules.add_perm('siteapi.world_delete', is_owner | is_admin_or_mod)
 
 # Destination permissions
 rules.add_perm('siteapi.destination_create', is_authenticated)
-rules.add_perm('siteapi.destination_update', has_parent_permissions | is_owner | is_admin_or_mod)
-rules.add_perm('siteapi.destination_detail', (is_object_public & is_authenticated) | has_parent_permissions | is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.destination_update', is_parent_owner | is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.destination_detail', (is_object_public & is_authenticated) | is_parent_owner | is_owner | is_admin_or_mod)
 rules.add_perm('siteapi.destination_list', is_authenticated)
-rules.add_perm('siteapi.destination_delete', is_owner | has_parent_permissions | is_admin_or_mod)
+rules.add_perm('siteapi.destination_delete', is_owner | is_parent_owner | is_admin_or_mod)
+
+# Race permissions
+rules.add_perm('siteapi.race_create', is_authenticated)
+rules.add_perm('siteapi.race_update', is_parent_owner | is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.race_detail', (is_object_public & is_authenticated) | is_parent_owner | is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.race_list', is_authenticated)
+rules.add_perm('siteapi.race_delete', is_owner | is_parent_owner | is_admin_or_mod)
