@@ -5,6 +5,7 @@ from .image import UploadedImage
 from .universe import Universe
 from .world import World
 from .character import Character
+from .race import Race
 from .story_post import StoryPost
 from .story_tag import StoryTag
 from .story_status import StoryStatus

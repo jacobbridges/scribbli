@@ -8,6 +8,7 @@ from siteapi.views.world import WorldDetail, WorldList, WorldCreate, WorldUpdate
 from siteapi.views.image import ImageDetail, ImageList, ImageCreate, ImageUpdate, ImageDelete
 from siteapi.views.destination import DestinationDetail, DestinationList, DestinationCreate, DestinationUpdate, \
     DestinationDelete
+from siteapi.views.race import RaceDetail, RaceList, RaceCreate, RaceUpdate, RaceDelete
 
 urlpatterns = [
     url(r'^signup/', Signup.as_view(), name='signup'),
@@ -25,7 +26,7 @@ urlpatterns = [
     url(r'^universe/(?P<pk>\d+)/update/$', UniverseUpdate.as_view(), name='universe_update'),
     url(r'^universe/(?P<pk>\d+)/delete/$', UniverseDelete.as_view(), name='universe_delete'),
 
-    # Images
+    # Image
     url(r'^images/$', ImageList.as_view(), name='image_list'),
     url(r'^image/(?P<pk>\d+)/$', ImageDetail.as_view(), name='image_detail'),
     url(r'^image/upload/$', ImageCreate.as_view(), name='image_create'),
@@ -42,6 +43,14 @@ urlpatterns = [
     url(r'^world/create/$', WorldCreate.as_view(), name='world_create'),
     url(r'^world/(?P<pk>\d+)/update/$', WorldUpdate.as_view(), name='world_update'),
     url(r'^world/(?P<pk>\d+)/delete/$', WorldDelete.as_view(), name='world_delete'),
+    
+    # Race
+    url(r'^world/(?P<world_pk>\d+)/races/$', RaceList.as_view(), name='world_race_list'),
+    url(r'^races/', RaceList.as_view(), name='race_list'),
+    url(r'^race/(?P<pk>\d+)/$', RaceDetail.as_view(), name='race_detail'),
+    url(r'^race/create/$', RaceCreate.as_view(), name='race_create'),
+    url(r'^race/(?P<pk>\d+)/update/$', RaceUpdate.as_view(), name='race_update'),
+    url(r'^race/(?P<pk>\d+)/delete/$', RaceDelete.as_view(), name='race_delete'),
 
     # Destination
     url(r'^world/(?P<world_pk>\d+)/destinations/$', DestinationList.as_view(), name='world_destination_list'),

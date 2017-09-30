@@ -94,6 +94,8 @@ class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
 
     def get_form_kwargs(self):
         self.object = self.model()
+        if not all((x in self.request.POST or x in self.request.FILES) for x in self.fields):
+            return self.throw_error('All fields are required.', required_fields=self.fields)
         if self.sluggable:
             setattr(
                 self.object,
@@ -101,8 +103,6 @@ class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
                 slugify(self.request.POST[self.model.sluggable_field], allow_unicode=True))
         if self.ownable:
             setattr(self.object, 'owner', self.request.user)
-        if not all((x in self.request.POST or x in self.request.FILES) for x in self.fields):
-            return self.throw_error('All fields are required.', required_fields=self.fields)
         return super(JSONCreateView, self).get_form_kwargs()
 
     def form_valid(self, form):
