@@ -6,21 +6,25 @@ from .image import BackgroundMixin, AvatarMixin
 from .world import WorldMixin
 
 
-class Destination(models.Model, BackgroundMixin, AvatarMixin, WorldMixin, DateCreatedMixin,
-                  DateModifiedMixin, OwnerMixin):
+class Destination(BackgroundMixin, AvatarMixin, WorldMixin, DateCreatedMixin, DateModifiedMixin,
+                  OwnerMixin):
     name = models.CharField(max_length=40)
     slug = models.CharField(max_length=40)
     description = models.TextField()
     parent = models.ForeignKey('Destination', on_delete=models.CASCADE, related_name='children',
-                               related_query_name='child', null=True)
+                               related_query_name='child', null=True, blank=True)
     is_public = models.BooleanField()
 
     sluggable_field = 'name'
-    editable_fields = ['name', 'description', 'parent', 'is_public', 'background', 'avatar',
+    editable_fields = ['name', 'description', 'is_public', 'background', 'avatar', 'parent',
                        'world']
 
     class Meta:
         unique_together = ('name', 'world')
+
+    @property
+    def _parent(self):
+        return self.world
 
     def get_absolute_url(self):
         return reverse('destination_detail', kwargs={'pk': self.pk})
@@ -28,6 +32,7 @@ class Destination(models.Model, BackgroundMixin, AvatarMixin, WorldMixin, DateCr
     def serialize(self):
         data = super(Destination, self).serialize()
         data.update({
+            'pk': self.pk,
             'name': self.name,
             'slug': self.slug,
             'description': self.description,

@@ -98,9 +98,7 @@ class JSONCreateView(JSONResponseSingleObjectMixin, BaseCreateView):
             setattr(
                 self.object,
                 'slug',
-                slugify(getattr(
-                    self.object,
-                    self.model.sluggable_field), allow_unicode=True))
+                slugify(self.request.POST[self.model.sluggable_field], allow_unicode=True))
         if self.ownable:
             setattr(self.object, 'owner', self.request.user)
         if not all((x in self.request.POST or x in self.request.FILES) for x in self.fields):

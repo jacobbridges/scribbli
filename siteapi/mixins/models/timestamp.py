@@ -11,7 +11,10 @@ class DateCreatedMixin(models.Model, Serializable):
 
     @property
     def created_timestamp(self):
-        return self.date_created.timestamp()
+        if self.date_created:
+            return self.date_created.timestamp()
+        else:
+            return None
 
     def serialize(self):
         data = super(DateCreatedMixin, self).serialize()
@@ -27,7 +30,10 @@ class DateModifiedMixin(models.Model, Serializable):
 
     @property
     def modified_timestamp(self):
-        return self.date_modified.timestamp()
+        if self.date_modified:
+            return self.date_modified.timestamp()
+        else:
+            return None
 
     def serialize(self):
         data = super(DateModifiedMixin, self).serialize()
