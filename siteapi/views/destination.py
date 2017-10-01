@@ -15,6 +15,11 @@ class DestinationList(PermissionRequiredJSONMixin, JSONListView):
     permission_required = 'siteapi.destination_list'
     paginate_by = 10
 
+    def get_queryset(self):
+        if 'world_pk' in self.kwargs:
+            return self.model.objects.filter(world_id=self.kwargs['world_pk'])
+        return super(DestinationList, self).get_queryset()
+
 
 class DestinationCreate(PermissionRequiredJSONMixin, JSONCreateView):
     model = Destination

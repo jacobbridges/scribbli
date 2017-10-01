@@ -15,6 +15,11 @@ class WorldList(PermissionRequiredJSONMixin, JSONListView):
     permission_required = 'siteapi.world_list'
     paginate_by = 10
 
+    def get_queryset(self):
+        if 'universe_pk' in self.kwargs:
+            return self.model.objects.filter(universe_id=self.kwargs['universe_pk'])
+        return super(WorldList, self).get_queryset()
+
 
 class WorldCreate(PermissionRequiredJSONMixin, JSONCreateView):
     model = World

@@ -1,5 +1,4 @@
 from django.conf.urls import url
-from django.contrib.auth.decorators import login_required
 
 from siteapi.views import Signup, AlphaInvitation, Writer, Login
 from siteapi.views.universe import UniverseDetail, UniverseList, UniverseCreate, UniverseUpdate, \
@@ -9,6 +8,8 @@ from siteapi.views.image import ImageDetail, ImageList, ImageCreate, ImageUpdate
 from siteapi.views.destination import DestinationDetail, DestinationList, DestinationCreate, DestinationUpdate, \
     DestinationDelete
 from siteapi.views.race import RaceDetail, RaceList, RaceCreate, RaceUpdate, RaceDelete
+from siteapi.views.character import CharacterDetail, CharacterList, CharacterCreate, \
+    CharacterUpdate, CharacterDelete
 
 urlpatterns = [
     url(r'^signup/', Signup.as_view(), name='signup'),
@@ -59,4 +60,12 @@ urlpatterns = [
     url(r'^destination/create/$', DestinationCreate.as_view(), name='destination_create'),
     url(r'^destination/(?P<pk>\d+)/update/$', DestinationUpdate.as_view(), name='destination_update'),
     url(r'^destination/(?P<pk>\d+)/delete/$', DestinationDelete.as_view(), name='destination_delete'),
+    
+    # Character
+    url(r'^world/(?P<world_pk>\d+)/characters/$', CharacterList.as_view(), name='world_character_list'),
+    url(r'^characters/', CharacterList.as_view(), name='character_list'),
+    url(r'^character/(?P<pk>\d+)/$', CharacterDetail.as_view(), name='character_detail'),
+    url(r'^character/create/$', CharacterCreate.as_view(), name='character_create'),
+    url(r'^character/(?P<pk>\d+)/update/$', CharacterUpdate.as_view(), name='character_update'),
+    url(r'^character/(?P<pk>\d+)/delete/$', CharacterDelete.as_view(), name='character_delete'),
 ]

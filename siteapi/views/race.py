@@ -15,6 +15,11 @@ class RaceList(PermissionRequiredJSONMixin, JSONListView):
     permission_required = 'siteapi.race_list'
     paginate_by = 10
 
+    def get_queryset(self):
+        if 'world_pk' in self.kwargs:
+            return self.model.objects.filter(world_id=self.kwargs['world_pk'])
+        return super(RaceList, self).get_queryset()
+
 
 class RaceCreate(PermissionRequiredJSONMixin, JSONCreateView):
     model = Race

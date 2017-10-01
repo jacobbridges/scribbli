@@ -66,3 +66,10 @@ rules.add_perm('siteapi.race_update', is_parent_owner | is_owner | is_admin_or_m
 rules.add_perm('siteapi.race_detail', (is_object_public & is_authenticated) | is_parent_owner | is_owner | is_admin_or_mod)
 rules.add_perm('siteapi.race_list', is_authenticated)
 rules.add_perm('siteapi.race_delete', is_owner | is_parent_owner | is_admin_or_mod)
+
+# Character permissions
+rules.add_perm('siteapi.character_create', is_authenticated)
+rules.add_perm('siteapi.character_update', is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.character_detail', is_authenticated)
+rules.add_perm('siteapi.character_list', is_authenticated)
+rules.add_perm('siteapi.character_delete', is_owner | is_admin_or_mod)
