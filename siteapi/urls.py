@@ -10,6 +10,11 @@ from siteapi.views.destination import DestinationDetail, DestinationList, Destin
 from siteapi.views.race import RaceDetail, RaceList, RaceCreate, RaceUpdate, RaceDelete
 from siteapi.views.character import CharacterDetail, CharacterList, CharacterCreate, \
     CharacterUpdate, CharacterDelete
+from siteapi.views.story import StoryDetail, StoryList, StoryCreate, StoryUpdate, StoryDelete
+from siteapi.views.chapter import ChapterDetail, ChapterList, ChapterCreate, ChapterUpdate, \
+    ChapterDelete
+from siteapi.views.story_post import StoryPostDetail, StoryPostList, StoryPostCreate, \
+    StoryPostUpdate, StoryPostDelete
 
 urlpatterns = [
     url(r'^signup/', Signup.as_view(), name='signup'),
@@ -68,4 +73,25 @@ urlpatterns = [
     url(r'^character/create/$', CharacterCreate.as_view(), name='character_create'),
     url(r'^character/(?P<pk>\d+)/update/$', CharacterUpdate.as_view(), name='character_update'),
     url(r'^character/(?P<pk>\d+)/delete/$', CharacterDelete.as_view(), name='character_delete'),
+
+    # Story
+    url(r'^stories/', StoryList.as_view(), name='story_list'),
+    url(r'^story/(?P<pk>\d+)/$', StoryDetail.as_view(), name='story_detail'),
+    url(r'^story/create/$', StoryCreate.as_view(), name='story_create'),
+    url(r'^story/(?P<pk>\d+)/update/$', StoryUpdate.as_view(), name='story_update'),
+    url(r'^story/(?P<pk>\d+)/delete/$', StoryDelete.as_view(), name='story_delete'),
+    
+    # Chapter
+    url(r'^chapters/', ChapterList.as_view(), name='chapter_list'),
+    url(r'^chapter/(?P<pk>\d+)/$', ChapterDetail.as_view(), name='chapter_detail'),
+    url(r'^chapter/create/$', ChapterCreate.as_view(), name='chapter_create'),
+    url(r'^chapter/(?P<pk>\d+)/update/$', ChapterUpdate.as_view(), name='chapter_update'),
+    url(r'^chapter/(?P<pk>\d+)/delete/$', ChapterDelete.as_view(), name='chapter_delete'),
+    
+    # Story Post
+    url(r'^posts/', StoryPostList.as_view(), name='story_post_list'),
+    url(r'^post/(?P<pk>\d+)/$', StoryPostDetail.as_view(), name='story_post_detail'),
+    url(r'^post/create/$', StoryPostCreate.as_view(), name='story_post_create'),
+    url(r'^post/(?P<pk>\d+)/update/$', StoryPostUpdate.as_view(), name='story_post_update'),
+    url(r'^post/(?P<pk>\d+)/delete/$', StoryPostDelete.as_view(), name='story_post_delete'),
 ]

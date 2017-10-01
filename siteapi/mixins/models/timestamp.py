@@ -39,3 +39,15 @@ class DateModifiedMixin(models.Model, Serializable):
         data = super(DateModifiedMixin, self).serialize()
         data.update(dict(date_modified=self.modified_timestamp))
         return data
+
+
+class IconMixin(models.Model, Serializable):
+    icon = models.CharField(max_length=20)
+
+    class Meta:
+        abstract = True
+
+    def serialize(self):
+        data = super(IconMixin, self).serialize()
+        data.update(dict(icon=self.icon))
+        return data

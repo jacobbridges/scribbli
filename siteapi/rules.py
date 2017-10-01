@@ -73,3 +73,24 @@ rules.add_perm('siteapi.character_update', is_owner | is_admin_or_mod)
 rules.add_perm('siteapi.character_detail', is_authenticated)
 rules.add_perm('siteapi.character_list', is_authenticated)
 rules.add_perm('siteapi.character_delete', is_owner | is_admin_or_mod)
+
+# Story permissions
+rules.add_perm('siteapi.story_create', is_authenticated)
+rules.add_perm('siteapi.story_update', is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.story_detail', is_authenticated)
+rules.add_perm('siteapi.story_list', is_authenticated)
+rules.add_perm('siteapi.story_delete', is_owner | is_admin_or_mod)
+
+# Chapter permissions
+rules.add_perm('siteapi.chapter_create', is_authenticated)
+rules.add_perm('siteapi.chapter_update', is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.chapter_detail', is_authenticated)
+rules.add_perm('siteapi.chapter_list', is_authenticated)
+rules.add_perm('siteapi.chapter_delete', is_owner | is_admin_or_mod)
+
+# Chapter permissions
+rules.add_perm('siteapi.story_post_create', is_authenticated)
+rules.add_perm('siteapi.story_post_update', is_owner | is_admin_or_mod)
+rules.add_perm('siteapi.story_post_detail', is_authenticated)
+rules.add_perm('siteapi.story_post_list', is_authenticated)
+rules.add_perm('siteapi.story_post_delete', is_owner | is_admin_or_mod)
