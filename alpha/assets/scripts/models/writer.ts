@@ -92,7 +92,7 @@ export const writerModel = {
     })
       .then(function(apiResponse: SiteApi.Response<any>) {
 
-        if (apiResponse.id === 'success') {
+        if (apiResponse.success === true) {
 
           // Assign the api response to type "successfully created writer"
           let successResponse = apiResponse as SiteApi.Response<SiteApi.Model<SiteApi.Elements.Writer>[]>;
@@ -112,7 +112,7 @@ export const writerModel = {
           m.route.set('/login');
           return; // Return to ensure no more code is ran in this function
 
-        } else if (apiResponse.id === 'failure') {
+        } else if (apiResponse.success === false) {
 
           // Assign the api response to type "errored request"
           let failResponse = apiResponse as SiteApi.ErrorResponse;
@@ -151,7 +151,7 @@ export const writerModel = {
       data: { email, password },
     }).then((apiResponse: SiteApi.Response<any>) => {
 
-      if (apiResponse.id === 'success') {
+      if (apiResponse.success === true) {
 
         // 1. Store select information from the web token in local storage
         let successReponse = apiResponse as SiteApi.Response<SiteApi.Elements.WriterData>;
@@ -163,7 +163,7 @@ export const writerModel = {
         m.route.set('/home');
         return;
 
-      } else if (apiResponse.id === 'failure') {
+      } else if (apiResponse.success === false) {
 
         let failedResponse = apiResponse as SiteApi.ErrorResponse;
         writerModel.error = failedResponse.data.message;

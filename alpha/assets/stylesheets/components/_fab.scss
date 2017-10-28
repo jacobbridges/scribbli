@@ -1,0 +1,60 @@
+@import '../variables';
+
+// ----
+// Floating action button
+.fab {
+  display: inline-block;
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+
+  background: $light-text-normal;
+  color: $light-background-color;
+
+  font-size: 24px;
+  line-height: 48px;
+  text-align: center;
+
+  opacity: 0.6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: opacity 0.2s;
+}
+.fab:hover {
+  opacity: 1.0;
+  cursor: pointer;
+}
+.fab-menu {
+  display: inline-block;
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  width: 40px;
+}
+.fab-menu-option {
+  display: inline-block;
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  background: $light-text-normal;
+  color: $light-background-color;
+
+  font-size: 20px;
+  line-height: 40px;
+  text-align: center;
+
+  opacity: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: bottom 0.1s;
+}
+.fab-menu-option:hover {
+  cursor: pointer;
+}

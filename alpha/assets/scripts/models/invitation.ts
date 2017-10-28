@@ -24,7 +24,7 @@ export const invitationModel = {
     })
       .then(function(apiResponse: SiteApi.Response<SiteApi.Model<SiteApi.Elements.Invitation>[]>) {
 
-        if (apiResponse.id === 'success')
+        if (apiResponse.success === true)
           invitationModel.current = apiResponse.data[0].fields;
         else
           invitationModel.current = null;

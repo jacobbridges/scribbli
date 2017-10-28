@@ -40,7 +40,7 @@ export const checkAuth = (view: Mithril.Component<any, any>) => ({
         withCredentials: true,
       }).then((apiResponse: SiteApi.Response<any>) => {
 
-        if (apiResponse.id === 'success') {
+        if (apiResponse.success === true) {
 
           console.log('Got data!', apiResponse.data);
           let successResponse = apiResponse as SiteApi.Response<SiteApi.Elements.WriterData>;
@@ -51,7 +51,7 @@ export const checkAuth = (view: Mithril.Component<any, any>) => ({
           document.querySelector('body').className = 'app';
           return view;
 
-        } else if (apiResponse.id === 'failure') {
+        } else if (apiResponse.success === false) {
 
           console.log('There was an error retrieving the writers data!', apiResponse);
           m.route.set('/login');

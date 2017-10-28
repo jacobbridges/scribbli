@@ -1,7 +1,7 @@
 export namespace SiteApi {
 
   export interface Response<T> {
-    id: string;
+    success: boolean;
     data: T;
   }
 
@@ -16,7 +16,7 @@ export namespace SiteApi {
     extra?: any;
   }
   export interface ErrorResponse {
-    id: string;
+    success: boolean;
     data: DataError;
   }
 

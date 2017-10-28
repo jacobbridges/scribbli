@@ -103,7 +103,7 @@ export const worldModel = {
       data: formData,
     }).then((apiResponse: SiteApi.Response<any>) => {
 
-      if (apiResponse.id === 'success') {
+      if (apiResponse.success === true) {
 
         let successResponse = apiResponse as SiteApi.Response<SiteApi.Elements.World>;
 
@@ -114,7 +114,7 @@ export const worldModel = {
         worldModel.form = {} as WorldForm;
         m.route.set(`/world/${worldModel.current.slug}`);
 
-      } else if (apiResponse.id === 'failure') {
+      } else if (apiResponse.success === false) {
 
         let errorResponse = apiResponse as SiteApi.ErrorResponse;
 
@@ -169,14 +169,14 @@ export const worldModel = {
       data: JSON.parse(JSON.stringify({ pk, name, slug })),
     }).then((apiResponse: SiteApi.Response<any>) => {
 
-      if (apiResponse.id === 'success') {
+      if (apiResponse.success === true) {
 
         let successResponse = apiResponse as SiteApi.Response<SiteApi.Elements.World>;
 
         // Set the current world to the response from the api
         worldModel.current = successResponse.data;
 
-      } else if (apiResponse.id === 'failure') {
+      } else if (apiResponse.success === false) {
 
         let failureResponse = apiResponse as SiteApi.ErrorResponse;
 
