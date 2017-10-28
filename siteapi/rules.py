@@ -88,9 +88,16 @@ rules.add_perm('siteapi.chapter_detail', is_authenticated)
 rules.add_perm('siteapi.chapter_list', is_authenticated)
 rules.add_perm('siteapi.chapter_delete', is_owner | is_admin_or_mod)
 
-# Chapter permissions
+# Story post permissions
 rules.add_perm('siteapi.story_post_create', is_authenticated)
 rules.add_perm('siteapi.story_post_update', is_owner | is_admin_or_mod)
 rules.add_perm('siteapi.story_post_detail', is_authenticated)
 rules.add_perm('siteapi.story_post_list', is_authenticated)
 rules.add_perm('siteapi.story_post_delete', is_owner | is_admin_or_mod)
+
+# Story status permissions
+rules.add_perm('siteapi.story_status_create', is_admin_or_mod)
+rules.add_perm('siteapi.story_status_update', is_admin_or_mod)
+rules.add_perm('siteapi.story_status_detail', is_authenticated)
+rules.add_perm('siteapi.story_status_list', is_authenticated)
+rules.add_perm('siteapi.story_status_delete', is_admin)

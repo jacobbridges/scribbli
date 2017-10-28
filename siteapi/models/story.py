@@ -3,19 +3,16 @@ from django.urls.base import reverse
 
 from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, OwnerMixin, Serializable
 from .character import Character
-from .story_tag import StoryTag
-from .story_status import StoryStatus
+from .story_tag import StoryTagMixin
+from .story_status import StoryStatusMixin
 
 
-class Story(DateCreatedMixin, DateModifiedMixin, OwnerMixin):
+class Story(DateCreatedMixin, DateModifiedMixin, OwnerMixin, StoryStatusMixin, StoryTagMixin):
     name = models.CharField(max_length=50, unique=True)
     slug = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     characters = models.ManyToManyField(Character, related_name='stories')
-    tags = models.ManyToManyField(StoryTag, related_name='stories')
     is_public = models.BooleanField()
-    status = models.ForeignKey(StoryStatus, on_delete=models.SET_NULL, related_query_name='stories',
-                               null=True)
 
     sluggable_field = 'name'
     editable_fields = ['name', 'description', 'is_public', 'status']
@@ -34,10 +31,7 @@ class Story(DateCreatedMixin, DateModifiedMixin, OwnerMixin):
             'slug': self.slug,
             'description': self.description,
             'character_pks': list(self.characters.all().values_list('pk', flat=True)),
-            'tags': list(self.tags.all().values_list('slug', flat=True)),
             'is_public': self.is_public,
-            'status': self.status.name,
-            'status_pk': self.status.pk,
         })
         return data
 

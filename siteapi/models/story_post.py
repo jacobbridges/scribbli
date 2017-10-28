@@ -15,8 +15,7 @@ class StoryPost(DateCreatedMixin, DateModifiedMixin, OwnerMixin, ChapterMixin):
     editable_fields = ['text', 'pov', 'chapter']
 
     def get_absolute_url(self):
-        return reverse('storypost_detail',
-                       kwargs={'pk': self.pk, 'story_pk': self.chapter.story.pk})
+        return reverse('story_post_detail', kwargs={'pk': self.pk})
 
     def serialize(self):
         data = super(StoryPost, self).serialize()

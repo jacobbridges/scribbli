@@ -10,11 +10,14 @@ from siteapi.views.destination import DestinationDetail, DestinationList, Destin
 from siteapi.views.race import RaceDetail, RaceList, RaceCreate, RaceUpdate, RaceDelete
 from siteapi.views.character import CharacterDetail, CharacterList, CharacterCreate, \
     CharacterUpdate, CharacterDelete
-from siteapi.views.story import StoryDetail, StoryList, StoryCreate, StoryUpdate, StoryDelete
+from siteapi.views.story import StoryDetail, StoryList, StoryCreate, StoryUpdate, StoryDelete, \
+    StoryAddTag
 from siteapi.views.chapter import ChapterDetail, ChapterList, ChapterCreate, ChapterUpdate, \
     ChapterDelete
 from siteapi.views.story_post import StoryPostDetail, StoryPostList, StoryPostCreate, \
     StoryPostUpdate, StoryPostDelete
+from siteapi.views.story_status import StoryStatusDetail, StoryStatusList, StoryStatusCreate, \
+    StoryStatusUpdate, StoryStatusDelete
 
 urlpatterns = [
     url(r'^signup/', Signup.as_view(), name='signup'),
@@ -80,7 +83,8 @@ urlpatterns = [
     url(r'^story/create/$', StoryCreate.as_view(), name='story_create'),
     url(r'^story/(?P<pk>\d+)/update/$', StoryUpdate.as_view(), name='story_update'),
     url(r'^story/(?P<pk>\d+)/delete/$', StoryDelete.as_view(), name='story_delete'),
-    
+    url(r'^story/(?P<pk>\d+)/add-tag/(?P<tag_pk>\d+)/$', StoryAddTag.as_view(), name='story_add_tag'),
+
     # Chapter
     url(r'^chapters/', ChapterList.as_view(), name='chapter_list'),
     url(r'^chapter/(?P<pk>\d+)/$', ChapterDetail.as_view(), name='chapter_detail'),
@@ -94,4 +98,11 @@ urlpatterns = [
     url(r'^post/create/$', StoryPostCreate.as_view(), name='story_post_create'),
     url(r'^post/(?P<pk>\d+)/update/$', StoryPostUpdate.as_view(), name='story_post_update'),
     url(r'^post/(?P<pk>\d+)/delete/$', StoryPostDelete.as_view(), name='story_post_delete'),
+
+    # Story Status
+    url(r'^story-statuses/', StoryStatusList.as_view(), name='story_status_list'),
+    url(r'^story-status/(?P<pk>\d+)/$', StoryStatusDetail.as_view(), name='story_status_detail'),
+    url(r'^story-status/create/$', StoryStatusCreate.as_view(), name='story_status_create'),
+    url(r'^story-status/(?P<pk>\d+)/update/$', StoryStatusUpdate.as_view(), name='story_status_update'),
+    url(r'^story-status/(?P<pk>\d+)/delete/$', StoryStatusDelete.as_view(), name='story_status_delete'),
 ]

@@ -1,6 +1,7 @@
 from django.db import models
+from django.urls.base import reverse
 
-from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, IconMixin
+from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, IconMixin, Serializable
 
 
 class StoryTag(DateCreatedMixin, DateModifiedMixin, IconMixin):
@@ -18,5 +19,26 @@ class StoryTag(DateCreatedMixin, DateModifiedMixin, IconMixin):
             'name': self.name,
             'slug': self.slug,
             'description': self.description,
+        })
+        return data
+
+
+class StoryTagMixin(models.Model, Serializable):
+    tags = models.ManyToManyField(StoryTag, related_name='%(class)ss')
+
+    class Meta:
+        abstract = True
+
+    def serialize(self):
+        data = super(StoryTagMixin, self).serialize()
+        tags = self.tags.all()
+        tag_dicts = map(lambda t: dict(
+            tag_pk=t.pk,
+            tag_name=t.name,
+            tag_slug=t.slug,
+            tag_description=t.description,
+        ), tags)
+        data.update({
+            'tags': list(tag_dicts)
         })
         return data
