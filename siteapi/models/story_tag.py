@@ -1,5 +1,4 @@
 from django.db import models
-from django.urls.base import reverse
 
 from siteapi.mixins.models import DateCreatedMixin, DateModifiedMixin, IconMixin, Serializable
 
