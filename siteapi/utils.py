@@ -32,8 +32,8 @@ def match_writer_rgx(writer):
 
 def make_error(error, extra=None):
     if extra:
-        return dict(id='failure', data=dict(message=error, extra=extra))
-    return dict(id='failure', data=dict(message=error))
+        return dict(success=False, data=dict(message=error, extra=extra))
+    return dict(success=False, data=dict(message=error))
 
 
 def make_token(email, name, scopes):

@@ -43,7 +43,7 @@ class LoginView(View):
 
         # Create the response, attach cookies, and return
         response = JsonResponse(dict(
-            id='success',
+            success=True,
             data=dict(email=writer.email, name=writer.username, scopes=[]),
         ))
         response.set_signed_cookie('a.t', token, salt=COOKIE_SALT, expires=one_day_from_now())
@@ -83,7 +83,7 @@ class LoginView(View):
         writer.profile.token = token
         writer.save()
         response = JsonResponse(dict(
-            id='success',
+            success=True,
             data=dict(email=writer.email, name=writer.username, scopes=[]),
         ))
         response.set_signed_cookie('a.t', token, salt=COOKIE_SALT, expires=one_day_from_now())
