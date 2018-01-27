@@ -29,7 +29,7 @@ export const homeView = checkAuth({
     const fullPageLayoutData: Components.IFullPageLayout = {
       breadcrumbs: m(Components.breadcrumb),
       pageHeading: 'Home Page',
-      body: m('p', `Welcome home, ${wm.i.name}`),
+      body: m('p', `Welcome home, ${wm.i.name}!`),
       fab: m(Components.FAB, { fabData }),
     };
 
