@@ -26,10 +26,29 @@ export const homeView = checkAuth({
       mainIcon: 'fa fa-book',
     };
 
+    const calloutData: Components.ICalloutData = {
+      type: 'warning',
+      title: 'Getting Started',
+      content: m('p', [
+        'You haven\'t created any stories yet. ',
+        m('a', { href: '/stories', oncreate: m.route.link }, 'Create'),
+        ' a new story or ',
+        m('a', { href: '/stories', oncreate: m.route.link }, 'browse'),
+        ' existing stories.'
+      ]),
+    };
+
+    const body = m('div.row',[
+      m('div.col-md-12', [
+        m(Components.callout, { calloutData }),
+        m('p', `Welcome home, ${wm.i.name}!`),
+      ]),
+    ]);
+
     const fullPageLayoutData: Components.IFullPageLayout = {
       breadcrumbs: m(Components.breadcrumb),
       pageHeading: 'Home Page',
-      body: m('p', `Welcome home, ${wm.i.name}!`),
+      body,
       fab: m(Components.FAB, { fabData }),
     };
 
